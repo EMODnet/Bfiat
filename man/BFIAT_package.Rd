@@ -1,5 +1,6 @@
 \name{Bfiat-package}
 \alias{Bfiat-package}
+\alias{Bfiat}
 \docType{package}
 \title{
   Bottom Fishing Impact Assessment Tools
