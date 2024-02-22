@@ -1,0 +1,13 @@
+useDynLib(Bfiat)
+
+import(deSolve, Btrait)
+importFrom("stats", "na.omit", "uniroot")
+importFrom("graphics", "par")
+importFrom("stats", "reshape")
+importFrom("grDevices", "grey.colors")
+importFrom("stats", "aggregate")
+importFrom("utils", "stack")
+export(perturb, logistic)
+export(getDbModel, getIrrModel, getTraitModel)
+export(par_d, par_K, par_r, par_m) 
+export(steadyDensity, eventDensity, intervalDensity)
