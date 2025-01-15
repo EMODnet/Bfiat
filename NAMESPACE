@@ -7,7 +7,12 @@ importFrom("stats", "reshape")
 importFrom("grDevices", "grey.colors")
 importFrom("stats", "aggregate")
 importFrom("utils", "stack")
-export(perturb, logistic)
-export(getDbModel, getIrrModel, getTraitModel)
+
+export(run_perturb, run_logistic)
+export(steady_perturb, steady_logistic)
+export(density_perturb, density_logistic)
+
+export(density_trawl) 
+
+export(get_Db_model, get_irr_model, get_trait_model)
 export(par_d, par_K, par_r, par_m) 
-export(steadyDensity, eventDensity, intervalDensity)

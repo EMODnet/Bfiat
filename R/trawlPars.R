@@ -4,14 +4,13 @@
 ## ====================================================================
 ## ====================================================================
 
-
 ## ====================================================================
 # a function to estimate depletion rate based on depth occurrence of species
 ## ====================================================================
 
-par_d <- function(gpd   =    1 ,   # gear penetration depth, /cm
-                  m_d   = 0.075,   # mortality parameter, /cm
-                  m_max =   0.45,  # maximum depletion in any layer
+par_d <- function(gpd   =     1 ,  # gear penetration depth, cm
+                  m_d   =   0.055, # mortality parameter, /cm
+                  m_max =   0.42,  # maximum depletion in any layer
                   fDepth,          # fractional occurrence of species in depth layers
                   uDepth           # upper position of depth layers, cm
                         ) {    
@@ -36,10 +35,11 @@ par_d <- function(gpd   =    1 ,   # gear penetration depth, /cm
     stop("number of columns of 'fDepth' should be = length of 'uDepth'")
     
   if (length(gpd) == 1 & nrow(fDepth) != 1){
-    gpd <- rep(gpd, times=nrow(fDepth))
+    gpd <- rep(gpd, times = nrow(fDepth))
     
   } else if (nrow(fDepth) ==1 & length(gpd) > 1) 
-    fDepth <- matrix(ncol=ncol(fDepth), nrow=length(gpd), data=fDepth, byrow=TRUE)
+    fDepth <- matrix(ncol = ncol(fDepth), nrow = length(gpd), 
+                     data = fDepth, byrow = TRUE)
   
   if (length(gpd) != nrow(fDepth))
       stop ("'fDepth' and 'gpd' not compatible; length of gpd should be = 1 or = nrow(fDepth")
@@ -65,9 +65,18 @@ par_d <- function(gpd   =    1 ,   # gear penetration depth, /cm
 # a function to estimate the rate of increase based on longevity
 ## ====================================================================
 
-par_r <- function(longevity = 1  # lifetime, years
-                        ) {    
-   ri <- 5.32/longevity
+par_r <- function(age_at_maturity = NULL,  # age at maturity, years
+                  longevity       = NULL)  {     # lifetime, years
+  
+  if (is.null(age_at_maturity) & ! is.null(longevity)){                       
+     ri <- 5.31/longevity
+  
+  } else if (is.null(age_at_maturity)) {
+    stop ("either longevity or age_at_maturity should have a value")
+  
+  } else {
+     ri <- 5.31*0.7844/age_at_maturity
+  }
    ri[is.infinite(ri)] <- NA
    ri
   }
@@ -80,15 +89,35 @@ par_r <- function(longevity = 1  # lifetime, years
 par_K <- function(density,  # current densities
                   sar,      # Swept area ratio, units m2/m2/year
                   r,        # /year, rate of increase
-                  d)        # -, depletion fraction due to fishing
+                  d,        # -, depletion fraction due to fishing
+                  t_density = NULL) # time at which density was estimated; NULL=steady-state
                          {    
   # To check if all have same length or are compatible
-  DATA <- data.frame(density=density, sar=sar, r=r, d=d)
+  DATA <- data.frame(density=density, sar=sar, r=r, d=d, K = 1)
+  
   isn  <- which(sar <= 0) 
-  Ki <- DATA$density/steadyDensity(K=1, r=DATA$r, sar=DATA$sar, d=DATA$d)
+  
+  if (is.null(t_density))     # steady state at time infinite, using K=1
+     Ki   <- DATA$density/steady_perturb(K = 1, 
+                                         r = DATA$r, d = DATA$d,  
+                                         sar   = DATA$sar)$density
+  
+  else if (t_density > 0) {   # Density is estimated after t_density years of fishing  
+     
+    ########### NEED TO CHANGE THIS  ################
+    # value at t_density, starting with K=1
+    
+    #SUBROUTINE eventdensity2(nspec, B0, sar,                         & 
+    #                           K, r, d, eventnr, B)
+    DATA$times = t_density
+    D_t <- density_perturb2(parms = DATA[, c("r", "d", "K", "times")], 
+                           sar   = DATA$sar)$density
+     Ki <- DATA$density / D_t 
+  } else Ki <- DATA$density
+  
   if (length(isn)) Ki[isn] <- DATA$density[isn]
   Ki[Ki < 0]          <- NA   # These densities are not sustainable 
-  Ki[is.infinite(Ki)] <- NA   # Cannot be calculated (r = sar*d)
+  Ki[is.infinite(Ki)] <- NA   # Cannot be calculated (extinct)
   Ki
 }
 
@@ -98,6 +127,40 @@ par_K <- function(density,  # current densities
 ## ====================================================================
 
 par_m <- function(sar, 
+                  r,  
+                  K, 
+                  d, 
+                  refD = K){
+    
+    # Assume Dens = 1
+    Fcd <- function(m, r, S, d, K, refD){
+      D0d <- 1-d      # initial condition in discrete
+      D0c <- 1-d/2    # initial condition in continuous
+      
+      D1d <- D0d/(D0d + (K/refD-D0d)*exp(-r/S))
+      D1c <- (r-m)/(r*D0c+((r-m)*K/refD-r*D0c)*exp(-(r-m)/S))
+      
+      D1d-D1c  # mean before &after fishing in discrete & continuous should be =
+    }
+    
+    D  <- pmin(d, 1-1e-5)
+    DD <- data.frame(sar=sar, r=r, d=D, K = K, refD = refD)  # all have equal length
+    
+    # check for NA in inputs
+    wisna      <- apply(DD, MARGIN=1, FUN=function(x) any(is.na(x)))
+    DD[wisna,] <- 1
+    
+    m <- sapply(1:nrow(DD), FUN=function(i) 
+      uniroot(f=Fcd, interval=c(0, 1000), 
+              r=DD$r[i], S=DD$sar[i], d=DD$d[i], K = DD$K[i], 
+              refD = DD$refD[i], tol=1e-8)$root)
+    m[d>=1]  <- NA
+    m[wisna] <- NA
+    m
+  }
+
+# older version with K = 1
+par_m_1 <- function(sar,   
                   r, 
                   d){
   
@@ -119,48 +182,10 @@ par_m <- function(sar,
   DD[wisna,] <- 1
   
   m <- sapply(1:nrow(DD), FUN=function(i) 
-    uniroot(f=Fcd, interval=c(0, 1000), r=DD$r[i], S=DD$sar[i], d=DD$d[i])$root)
+    uniroot(f=Fcd, interval=c(0, 1000), 
+            r=DD$r[i], S=DD$sar[i], d=DD$d[i], tol=1e-8)$root)
   m[d>=1] <- NA
   m[wisna] <- NA
-  m
-}
-
-
-par_m_2 <- function(sar, 
-                  r, 
-                  d){
-
-  n <- 1000
-  
-  Fcd <- function(m, r, S, d){
-    
-   D0d <- eventDensity(sar=S, r=r, d=d, n=n)      # initial condition in discrete
-   D0c <- (r-m)/(r-m*exp(-(r-m)*n/S))    # initial condition in continuous
-
-   # average density in interval after fishing - only part within log
-   # (K/r*log(1-D0/K*(1-3^(r/S))))  
-   D1d <- D0d*(1-exp(-r/S))                   # discrete
-   D1c <- D0c*r/(r-m)*(1-exp(-(r-m)/S)) # continuous
-   if (is.nan(D1c)) D1c <- 0
-   D1d-D1c  # mean before &after fishing in discrete - continuous
-  }
-  
-  D  <- pmin(d, 1-1e-5)                # depletion rate
-  DD <- data.frame(sar=sar, r=r, d=D)  # so that all have the same length
-  
-  # check for NA in inputs
-  wisna <- apply(DD, MARGIN=1, FUN=function(x) any(is.na(x)))
-  DD[wisna,] <- 1
-  
-  # check for NA in inputs
-  wis0 <- which(DD$d==0)
-  DD[wis0,] <- 1
-  
-  m <- sapply(1:nrow(DD), FUN=function(i) 
-        uniroot(f=Fcd, interval=c(0, 1000), r=DD$r[i], S=DD$sar[i], d=DD$d[i])$root)
-  m[d>=1] <- NA
-  m[wisna] <- NA
-  m[wis0] <- 0
   m
 }
 

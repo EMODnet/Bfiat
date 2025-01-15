@@ -9,5 +9,5 @@ citEntry(entry="manual",
   keywords =	"trawling, density, traits, ecosystem functions",
   textVersion =  paste("Karline Soetaert, Olivier Beauchard (2024).",
                        "R-package Bfiat: Tools for estimating the impact of bottom disturbance on sediment ecosystems.",
-                       "Data product created under the European Marine Observation Data Network (EMODnet) Biology Phase V.")
+                       "Data product created under the European Marine Observation Data Network (EMODnet) Biology Phase V projec, and under the NECCTON project (New Copernicus Capability for Trophic Ocean Networks) project.")
 )

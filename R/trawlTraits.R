@@ -4,14 +4,14 @@
 ## ====================================================================
 ## ====================================================================
 
-getTraitModel <- function(model,         
+get_trait_model <- function(model,         
                           trait,
                           trait.class = NULL, trait.score = NULL, 
                           taxonomy = NULL,  
                           t.column = 1, 
                           scalewithvalue = TRUE, 
                           verbose = FALSE){
-  traitModel <- getTraitDensity(
+  traitModel <- get_trait_density(
             wide        = model, 
             trait       = trait, 
             trait.class = trait.class, 
@@ -32,7 +32,7 @@ getTraitModel <- function(model,
 ## Estimating bioturbation/bioirrigation from model output
 ## ====================================================================
 
-getDbModel <- function(model,         
+get_Db_model <- function(model,         
                        trait=Btrait::Traits_Db,
                        taxonomy = NULL,  
                        weight, # two-columned data.frame (taxon, weight)
@@ -42,7 +42,7 @@ getIndexModel(model=model, trait=trait, taxonomy=taxonomy,
 
 ## ====================================================================
 
-getIrrModel <- function(model,         
+get_irr_model <- function(model,         
                        trait=Btrait::Traits_irr,
                        taxonomy = NULL,  
                        weight, # two-columned data.frame (taxon, weight)
@@ -72,7 +72,7 @@ getIndexModel <- function(model,
   if (inherits(S, "try-error"))
     stop ("Trait does not have all columns, should contain", paste(traitnames, collapse = ", "))
   
-  Data_Db  <- getTrait(
+  Data_Db  <- get_trait(
         taxon    = taxa, 
         trait    = Trait, 
         taxonomy = taxonomy,
@@ -115,7 +115,7 @@ getIndexModel <- function(model,
   colnames(model_BPC)[ncol(model_BPC)] <- type
   model_BPC <- cbind(model[, 1], model_BPC)
   model_BPC <- as.matrix(model_BPC)
-  colnames(model_BPC)[1] <- "times"
+  colnames(model_BPC)[1] <- "time"
   class(model_BPC) <- c("deSolve", "matrix")
   attributes(model_BPC)$Factor <- Data_FAC 
   attributes(model_BPC)$Noweight <- Noweight 

@@ -18,23 +18,31 @@
 }
 
 \usage{
-par_r (longevity = 1)   
-par_d (gpd = 1, m_d = 0.075, m_max = 0.45, 
-        fDepth, uDepth)
-par_K (density, sar, r, d)       
-par_m (sar, r, d)
+par_r (age_at_maturity = NULL, longevity = NULL)   
+par_d (gpd = 1, m_d = 0.055, m_max = 0.42, 
+       fDepth, uDepth)
+par_K (density, sar, r, d, t_density = NULL)       
+par_m (sar, r, K, d, refD = K)
 }
 
 \arguments{
-  \item{density }{vector or number with abundance or biomass of the taxon. 
+  \item{density }{vector or number with the observed abundance or biomass of the taxon. 
     }    
-  \item{sar }{fishing intensity, estimated as Swept Area Ratio, units e.g. [m2/m2/year]. One number, or a vector of the same length as \code{density}.
+  \item{t_density }{time after the onset of fishing at which the density/biomass was estimated. 
+  If NULL, then an infinite time at which fishing intensity was = sar is assumed. In that case, the inputted \code{density} is assumed to be at steady-state with respect to \code{sar}.
+    }    
+    
+  \item{sar }{fishing intensity, estimated as Swept Area Ratio, units e.g. [m2/m2/year]. One number, or a vector of the same length as the other parameters.
   }
-  \item{r }{the rate of increase of each taxon, units e.g. [/year]. One number, or a vector of the same length as \code{density}.
+  \item{r }{the rate of increase of each taxon, units e.g. [/year]. One number, or a vector of the same length as the other parameters.
   }
-  \item{d }{depletion fraction due to fishing. One number, or a vector of the same length as \code{density}.
+  \item{d }{depletion fraction due to fishing. One number, or a vector of the same length as the other parameters.
   }
-  \item{longevity }{mean lifetime of the species, years.
+  \item{K }{carrying capacity. One number, or a vector of same length as the other parameters.
+  }
+  \item{refD }{reference density at which the mortality should be estimated. One number or a vector, or a vector of the same length as \code{r}.
+  }
+  \item{longevity, age_at_maturity }{mean lifetime or age at maturity of the species, years. \code{age_at_maturity} gives better estimates of rate of increase than \code{longevity}. At least one of these two arguments needs to be specified; if both are given a value then 
   }
   \item{gpd }{gear penetration depth, units e.g. [cm]. One number or a vector.
   }
@@ -151,7 +159,19 @@ par_d (gpd=12, fDepth = c(0.1, 0.3, 0.5, 0.2),  # fractional occurrence
 # Carrying capacity 
 # -------------------------------------
 
+# estimated assuming current density is in steady-state with fishing
+# this returns a NA -> the steady state of the density at the sar = 0
  par_K (density=1, sar=1, r=0.1, d=0.3)
+
+# Assuming that the density was estimated after 50 years of fishing
+ par_K (density=1, sar=1, r=0.1, d=0.3, t_density=50)
+
+# estimated average mortality rate is larger than the rate of increase, r
+ par_m (sar=1, r=0.1, d=0.3, K=1)
+
+# this returns a value -> the species is able to persist under the current sar
+ par_K (density=1, sar=1, r=0.1, d=0.075)
+ par_m (sar=1, r=0.1, d=0.3, K=10)  # smaller than 0.1
 
 # estimated for a sequence of fishing intensities
  sar.seq <- seq(from=0.05, to=2, by=0.05)
@@ -238,11 +258,12 @@ par_d (gpd=12, fDepth = c(0.1, 0.3, 0.5, 0.2),  # fractional occurrence
                             uDepth = uDepth, 
                             gpd    = 3))
 
- Dens <- with(MWTL$density, 
-      getDensity(descriptor  = list(station=station), 
-                 taxon       = taxon, 
-                 value       = list(density=density), 
-                 averageOver = year))
+ Dens <- get_density(
+                  data        = MWTL$density,
+                  descriptor  = list(station=station), 
+                  taxon       = taxon, 
+                  value       = list(density=density), 
+                  averageOver = year)
  
  FishStat <- merge(Dens    , 
                    MWTL$abiotics[,c("station", "sar")], 
@@ -263,6 +284,22 @@ par_d (gpd=12, fDepth = c(0.1, 0.3, 0.5, 0.2),  # fractional occurrence
                    d       = d))
  FishStat$KE <- KE
  
+# Note: some species do not have a value for the carrying capacity
+# based on the assumption that the density is at steady state with the 
+# current fishing intensity.
+
+length(which(is.na(KE)))/length(KE) # Fraction that cannot be there
+
+# Carrying capacity, assuming that fishing has been going on only for 50 years
+ FishStat$KE50 <- with(FishStat, 
+            par_K (density   = density, 
+                   t_density = 50,  
+                   sar       = sar, 
+                   r         = r, 
+                   d         = d))
+
+
+
 
 # total carrying capacity and total density per station:
 
@@ -281,13 +318,17 @@ par_d (gpd=12, fDepth = c(0.1, 0.3, 0.5, 0.2),  # fractional occurrence
  Kstat$D <- Dstat
 
  head(Kstat)
+
  
- with(Kstat, mapKey(x, y, 
+ with(Kstat, map_key(x, y, 
                     contours=MWTL$contours,
                     colvar = K/D-1, # color variable
                     clim   = c(1e-2,1),
                     main   = "K/D-1 for 3 cm trawling", 
-                    pch=18, cex=2, log="c"))
+                    pch = 18, cex = 2, log = "c"))
+
+
+
  
 ## ====================================================
 ## Mortality parameter and steady-state
@@ -303,34 +344,37 @@ times  <- seq(from=0,       to=tend, length.out=1000)
 events <- seq(from=0.5/sar, to=tend, by=1/sar)
 
 # model run with events
-run.discrete   <- perturb(parms  = parms, 
-                          times  = times, 
-                          events = events)
+run.discrete   <- run_perturb(parms  = parms, 
+                              times  = times, 
+                              events = events)
 
 # corresponding mortality paramter
 m              <- par_m(sar = sar, 
                         r   = parms["r"], 
-                        d   = parms["d"])
+                        d   = parms["d"], K = parms["K"])
 
 # put all in parameter vector (for continuous mortality)
 parms.c        <- c(parms[c("r", "K")], m=m)
 
 # model run with continuous mortality
-run.continuous <- logistic(parms = parms.c, 
-                           times = times)
+run.continuous <- run_logistic(parms = parms.c, 
+                               times = times)
 
 # compare both (it is not perfect)
 plot(run.continuous, run.discrete)
+
+
+
 }
 
 \seealso{
-\link{perturb} for how to run a disturbance model.
+\link{run_perturb} for how to run a disturbance model.
 
 \link[Btrait]{Traits_nioz}, for trait databases in package Btrait.
 
 \link[Btrait]{MWTL} for data sets on which fishing can be imposed.
 
-\link[Btrait]{mapKey} for simple plotting functions.
+\link[Btrait]{map_key} for simple plotting functions.
 }
 
 \references{

@@ -1,20 +1,21 @@
 \name{Combining Model output and Trait data}
-\alias{getTraitModel}
+\alias{get_trait_model}
 \title{
   Function to obtain (time x trait) data by combining model output (time x taxon) with trait (taxon x trait) data.
 }
 
 \description{
- \code{getTraitModel} combines (1) output of a fisheries model that describes how taxa densities evolve with time, with (2) a trait database for these taxa, to obtain how the traits evolve over time.
+ \code{get_trait_model} combines (1) output of a fisheries model that describes how taxa densities evolve with time, with (2) a trait database for these taxa, to obtain how the traits evolve over time.
 }
 
 \usage{
-getTraitModel(model, trait, trait.class = NULL, trait.score = NULL, 
-        taxonomy = NULL, t.column = 1, scalewithvalue = TRUE, verbose = FALSE)
+get_trait_model(model, trait, trait.class = NULL, trait.score = NULL, 
+                taxonomy = NULL, t.column = 1, 
+                scalewithvalue = TRUE, verbose = FALSE)
 }
 
 \arguments{
-  \item{model}{ dynamic model output that describes how taxa change over time. This is a matrix with (time x taxon) information, such as generated from the function \link{perturb}. The first column should contain the time, and the other columns the taxon density over time, with the column names the actual taxon names. (see note for the consequences of this.)
+  \item{model}{ dynamic model output that describes how taxa change over time. This is a matrix with (time x taxon) information, such as generated from the function \link{run_perturb}. The first column should contain the time, and the other columns the taxon density over time, with the column names the actual taxon names. (see note for the consequences of this.)
   }
   \item{trait}{ (taxon x trait) data or (descriptor x trait) data, in *WIDE* format, and containing numerical values only. Traits can be fuzzy coded. The trait matrix should have the name of the taxon in its first column (if \code{t.column=1}); it is also allowed to have the taxon names as row.names (if \code{t.column=0}).   
   }
@@ -33,7 +34,7 @@ getTraitModel(model, trait, trait.class = NULL, trait.score = NULL,
 }
 
 \value{
-\code{getTraitModel} returns a time x trait density matrix of class \code{deSolve} (see \link[deSolve]{ode}), and contains, for each output time (rows), the traits as defined in \code{trait}.
+\code{get_trait_model} returns a time x trait density matrix of class \code{deSolve} (see \link[deSolve]{ode}), and contains, for each output time (rows), the traits as defined in \code{trait}.
 }
 
 \author{
@@ -41,7 +42,7 @@ getTraitModel(model, trait, trait.class = NULL, trait.score = NULL,
 }
 
 \note{
-\code{getTraitModel} is based on the Btrait function \link[Btrait]{getTraitDensity}. It returns an object of class \code{deSolve} and matrix (rather than a dataframe). This is to make use of the deSolve plotting facilities.
+\code{get_trait_model} is based on the Btrait function \link[Btrait]{get_trait_density}. It returns an object of class \code{deSolve} and matrix (rather than a dataframe). This is to make use of the deSolve plotting facilities.
 
 The names of the columns in \code{model} should have the taxon names, that are also found in the trait database. This can create a problem if the model output is a \code{data.frame} and the taxon names contain blancs. In this case, the names will have "." rather than " ". 
 
@@ -50,15 +51,15 @@ This can be solved either (1) by making the names in the trait database consiste
 }
 
 \seealso{
-\link{perturb} for the disturbance model.
+\link{run_perturb} for the disturbance model.
 
-\link{getDbModel} for deriving bioturbation and irrigation indices from a disturbance model.
+\link{get_Db_model} for deriving bioturbation and irrigation indices from a perturbation or logistic model.
 
 \link[Btrait]{Traits_nioz}, for trait databases in packge Btrait..
 
-\link[Btrait]{getTraitDensity}, for the function on which \code{getTraitModel} is based.
+\link[Btrait]{get_trait_density}, for the function on which \code{get_trait_model} is based.
 
-\link[Btrait]{getTrait} for functions from package Btrait to extract traits
+\link[Btrait]{get_trait} for functions from package Btrait to extract traits
 }
 
 \keyword{manip}
@@ -84,13 +85,13 @@ This can be solved either (1) by making the names in the trait database consiste
  trawl2  <- seq(from=92, by=182.5, to=365*5)
 
 # run both models
- trawl1run <- perturb (parms  = Trawl.pars, 
-                       times  = times, 
-                       events = trawl1)     
+ trawl1run <- run_perturb (parms  = Trawl.pars, 
+                           times  = times, 
+                           events = trawl1)     
 
- trawl2run <- perturb (parms  = Trawl.pars, 
-                       times  = times, 
-                       events = trawl2)     
+ trawl2run <- run_perturb (parms  = Trawl.pars, 
+                           times  = times, 
+                           events = trawl2)     
 
  plot(trawl1run, trawl2run, lty=1)
 
@@ -136,14 +137,14 @@ Btaxonomy <- data.frame(
 # if verbose=TRUE, a warning will be given, as there is no trait information
 # for sp4 - this affects the trait density for station "b"
 
-TraitRun1 <- getTraitModel (
+TraitRun1 <- get_trait_model (
                         model       = trawl1run,  
                         trait       = Btraits, 
                         trait.class = Btraits.lab$trait, 
                         trait.score = Btraits.lab$score, 
                         verbose     = FALSE)
                         
-TraitRun2 <- getTraitModel (
+TraitRun2 <- get_trait_model (
                         model       = trawl2run,  
                         trait       = Btraits, 
                         trait.class = Btraits.lab$trait, 
@@ -158,7 +159,7 @@ plot(TraitRun1, TraitRun2)
 ## Trait changes - keeping fuzzy scores
 ##-----------------------------------------------------
 
-TraitRun1b <- getTraitModel (
+TraitRun1b <- get_trait_model (
                         model       = trawl1run,  
                         trait       = Btraits)
 
@@ -169,7 +170,7 @@ attributes(TraitRun1b)$notrait
 ## use taxonomic info to create unknown traits
 ##-----------------------------------------------------
 
-TraitRun1c <- getTraitModel (
+TraitRun1c <- get_trait_model (
                         model       = trawl1run,  
                         trait       = Btraits, 
                         taxonomy    = Btaxonomy)

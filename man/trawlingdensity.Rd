@@ -1,47 +1,51 @@
-\name{density }
-\alias{eventDensity}
-\alias{steadyDensity}
-\alias{intervalDensity}
+\name{density during trawling events}
+\alias{density_trawl}
+
 \title{
-  Estimate steady-state density, density after trawling, average density between trawls
+  Estimates density before and after a trawling event, or the average density between trawls.
 }
 
 \description{
- \code{steadyDensity} calculates the steady-state density of benthic taxa, based on their carrying capacity K, on the fishing intensity (swept area ratio, sar), and on the species-specific parameters r and d (rate of increase and depletion fraction).
-
- \code{eventDensity} calculates the density of benthic taxa immediately after the n-th trawling event. 
+ \code{density_trawl} calculates the density of taxa immediately at the start and end after the n-th trawling event, and the mean density inbetween trawling events. 
  
- \code{intervalDensity} calculates the mean density of benthic taxa inbetween the n-th and n+1 th trawling event. 
-
 }
 
 \usage{
-steadyDensity(K=1, sar=1, r=1, d=0.1)
-
-eventDensity(K=1, sar=1, r=1, d=0.1, p=1-d, D0=K, n=1) 
-
-intervalDensity(K=1, sar=1, r=1, d=0.1, p=1-d, D0=K, n=1)
+density_trawl   (K = 1, r = 1, d = 0.1, 
+                parms = data.frame(K = K, r = r, d = d), 
+                sar = 1, D0 = parms[["K"]], n = 1) 
 }
 
 \arguments{
-  \item{sar }{fishing intensity, estimated as Swept Area Ratio, units e.g. [m2/m2/year]. One number, or, (for steadyDensity) a vector of the same length as \code{density}.
+  \item{sar }{fishing intensity, estimated as Swept Area Ratio, units e.g. [m2/m2/year]. One number.
   }
-  \item{r }{the rate of increase of each taxon, units e.g. [/year]. One number, or (for steadyDensity) a vector.
+  \item{r }{the rate of increase of each taxon, units e.g. [/year]. One number, or a vector.
   }
-  \item{d }{depletion fraction due to fishing. One number, or (for steadyDensity) a vector of same length as \code{r}.
+  \item{d }{depletion fraction due to fishing. One number, or a vector of same length as \code{r}.
   }
-  \item{p }{fraction remaining after fishing. One number.
+  \item{K }{carrying capacity. One number, or a vector of same length as \code{r}.
   }
-  \item{K }{carrying capacity. One number, or (for steadyDensity) a vector of same length as \code{r}.
+  \item{parms }{a data.frame with all parameters. 
   }
-  \item{D0 }{initial density. One number.
+  \item{D0 }{initial density. One number, or a vector of length = nrow(parms).
   }
-  \item{n }{number of fishing events. One number.
+  \item{n }{number of fishing events. One number, or a vector.
   }
 }
 
 \value{
- returns the estimated densities, one number or a vector.
+ Returns a \code{data.frame}, with the following columns:
+ 
+ \itemize{
+   \item \code{K, r, d, D0}: the model parameters, 
+   \item \code{times}, the start time of the trawling events as in argument \code{n}, 
+   \item \code{end_times}, the end time of the trawling events as in argument \code{n}, 
+   \item \code{ntrawl_from}, the number of the trawl at the start of the trawling interval (\code{n}),
+   \item \code{ntrawl_to}, the number of the trawl at the end of the trawling interval (\code{n+1}),
+   \item \code{average_density}, the density averaged over the trawling interval,
+   \item \code{start_density}, the density after trawling at the n-th trawling interval,
+   \item \code{end_density}, the density at the end of the n-th trawling interval, before the next trawling.
+  }
 }
 
 \author{
@@ -53,99 +57,92 @@ intervalDensity(K=1, sar=1, r=1, d=0.1, p=1-d, D0=K, n=1)
 \examples{
 
 ## ====================================================
-## Density after n fishing events
+## Density for one fishing events
 ## ====================================================
 
-eventDensity(n=1,  K=100)     
-eventDensity(n=10, K=100) 
-
-eventDensity(n=10, d=0.2, K=80)      # density immediately after 10th trawling
-eventDensity(n=11, d=0.2, K=80)/0.8  # density immediately before 11th trawling
-
-intervalDensity(n=10, d=0.2, K=80)   # mean density in the interval
-
-# apply the function for a sequence of events
-tend   <- 20
-S      <- 1
-events <- seq(1/S, tend, by=1/S)
-
-# Density immediately after all events
-fishD  <- mapply(events, FUN=function(x) 
-                         eventDensity(n=x, d=0.1, K=100, sar=S))
-fishD2 <- mapply(events, FUN=function(x) 
-                         eventDensity(n=x, d=0.2, K= 80, sar=S))
-
-# Mean density inbetween events
-fMean  <- mapply(events, FUN=function(x) 
-                         intervalDensity(n=x, d=0.1, K=100, sar=S))
-fMean2 <- mapply(events, FUN=function(x) 
-                         intervalDensity(n=x, d=0.2, K= 80, sar=S))
-
-# compare it with the dynamic model solution
-times  <- seq(0, tend,length.out=1000)
-
-Dens <- perturb(parms=list(r=c(1,1), K=c(100, 80), d=c(0.1, 0.2)), 
-                times=times, events=events)
-
-matplot.0D(Dens, lty=1, legend=FALSE)
-points(events, fishD,  col=1, pch=18)
-points(events, fishD2, col=2, pch=18)
-lines(events+0.5/S, fMean, lty=2)
-lines(events+0.5/S, fMean2, col=2, lty=2)
-legend("right", col=1, lty=c(1,2,NA), pch=c(NA,NA,18), 
-      legend=c("continuous", "interval average", "after perturbation"))
-
+D1 <- density_trawl(n = 1,  
+                    K = 100)   
+D1
+             
 ## ====================================================
-## Steady-state
+## Density for a sequence of fishing events
 ## ====================================================
 
-# discrete parameter values and run
+D2 <- density_trawl(n = 1:10, 
+                    K = 100) 
+D2
 
-parms  <- c(r=0.5, d=0.2, K=1)
-sar    <- 0.5
+## ====================================================
+## Density for a sequence of fishing events 
+## and multiple parameters
+## ====================================================
 
-times  <- seq(from=0,      to=20, length.out=1000)
-events <- seq(from=10/365, to=20, by=1/sar)
+D3 <- density_trawl(n = 1:5, 
+                    K = c(10, 20))
+D3
 
-run.discrete   <- perturb(parms  = parms, 
-                          times  = times, 
-                          events = events)
+## ====================================================
+## compare density_trawl with the dynamic model solution
+## ====================================================
 
-# continuous simulation 
+S      <- 1    # swept area ratio
+tend   <- 20   
 
-# Estimate continous mortality equivalent with event fishing
-m              <- par_m(sar = sar, 
-                        r   = parms["r"], 
-                        d   = parms["d"])
+fishD  <- density_trawl(n   = 1:tend, 
+                        d   = c(0.2, 0.1),
+                        K   = c(40, 100),
+                        sar = S)
 
-# new parameter vector                        
-parms.c        <- c(parms[c("r", "K")], m = m)
+head(fishD)
 
-run.continuous <- logistic(parms = parms.c, 
-                           times = times)
+# dynamic run
 
-# show both simulations in one figure
+times  <- seq(from = 0, to = tend, length.out = 1000)
 
-plot(run.discrete, run.continuous)
+parms  <- list(r = c(1,     1), 
+               K = c(40,  100), 
+               d = c(0.2, 0.1) )
 
-# use steadyDensity to estimate the steady-state condition
+Dens <- run_perturb(parms = parms, 
+                    times = times, 
+                    sar   = S)  # can only have one number for sar
 
-std <- steadyDensity(r   = 0.5, 
-                     d   = 0.2, 
-                     K   = 1, 
-                     sar = sar)
-abline(h=std, lty=2, col="green")
+# compare
+
+matplot.0D(Dens, 
+           lty = 1, legend = FALSE, 
+           ylab = "density", 
+           main = "comparison density_trawl and run_perturb")
+           
+with (fishD,
+   points(times, fishD$start_density ,  
+          col = factor(K), pch = 15))
+
+with (fishD,
+   points(end_times, fishD$end_density ,  
+          col = factor(K), pch = 1))
+
+with (fishD,
+   points(x = 0.5*(times+end_times), y = fishD$average_density ,  
+          col = factor(K), pch = 22))
+
+
+legend("left", lty = c(1, NA, NA, NA), pch = c(NA, 15, 1, 22), 
+      legend=c("run_perturb", "after perturbation", 
+      "before perturbation", "interval average"))
 
 }
 
 \seealso{
-\link{perturb} for how to run a disturbance model.
+\link{steady_perturb} for steady-state calculations.
+
+\link{run_perturb} for how to run a disturbance model.
 
 \link[Btrait]{Traits_nioz}, for trait databases in package Btrait.
 
 \link[Btrait]{MWTL} for data sets on which fishing can be imposed.
 
-\link[Btrait]{mapKey} for simple plotting functions.
+\link[Btrait]{map_key} for simple plotting functions.
 }
 
 \references{

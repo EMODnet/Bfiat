@@ -4,17 +4,25 @@
 ## ====================================================================
 ## ====================================================================
 
-perturb <- function(parms,                 # list/data.frame with r, k, d
-                    times,                 # output times, in years
-                    events=NULL,           # times of trawling events
-                    taxon=parms["taxon"],  # names of taxa
-                    Cini=parms["K"],       # initial condition
-                    addsum=FALSE, 
-                    verbose=FALSE){
+run_perturb <- function(
+                    parms,                     # list/data.frame with r, k, d
+                    times,                     # output times, in years
+                    sar = 1,
+                    tend_perturb = max(times), # time at which perturbation stops
+                    events = NULL,             # times of trawling events
+                    taxon  = parms[["taxon"]], # names of taxa
+                    D0     = parms[["K"]],       # initial condition
+                    addsum = FALSE, 
+                    verbose = FALSE){
   
   if (is.vector(parms)) 
     parms <- as.list(parms)
   else parms <- as.data.frame(parms)
+  
+  if (length(sar) > 1) stop ("sar should be one number")
+  
+  if (is.null(events)) 
+    events <- seq(from = times[1], by = 1/sar, to = tend_perturb)
   
   pn <- names(parms)
   if (any(!c("K", "r", "d") %in% pn))
@@ -24,7 +32,9 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
   d  <- parms[["d"]]
   
   include <- (1:length(K))
-  omit    <- unique(c(which(is.na(r)), which(is.na(K)), which(is.na(d))))
+  omit    <- unique(c(which(is.na(r)), 
+                      which(is.na(K)), 
+                      which(is.na(d))))
   
   if (length(omit)){
     if (verbose) warning("parameters not given for",length(omit),
@@ -32,24 +42,24 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
     include <- include[-omit] 
   }
   
-  C0  <- Cini
+  C0  <- D0
   nC0 <- 1  
   
-  if (is.data.frame(Cini) | is.matrix(Cini)) {
-    if (nrow(Cini) != nrow(parms))
-      stop(" 'Cini' should have as many rows as 'parms'")
-    nC0 <- ncol(Cini)
+  if (is.data.frame(D0) | is.matrix(D0)) {
+    if (nrow(D0) != nrow(parms))
+      stop(" 'D0' should have as many rows as 'parms'")
+    nC0 <- ncol(D0)
     
     # If more runs need to be done: 
     # model runs with relative density first, i.e. with C0=1
     # then these are multiplied with the actual initial densities (using sweep)
     if (nC0 > 1) {
-      if (any(is.character(Cini[,1]))) 
-        stop("'first column of Cini contains strings - should be numeric")
+      if (any(is.character(D0[,1]))) 
+        stop("'first column of D0 contains strings - should be numeric")
       C0 <- rep(1, times=length(r))
     }
-  } else if (length(Cini) == 1) 
-    C0 <- rep(Cini, times=length(r))
+  } else if (length(D0) == 1) 
+    C0 <- rep(D0, times=length(r))
 
   C0 <- unlist(C0)
   r  <- r[include]
@@ -61,7 +71,7 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
   t0     <- times[1]
   tend   <- times[length(times)]
   trawl  <- events[events >= t0 & events <= tend]
-  events <- sort(unique(c(trawl, tend)))
+  events <- sort(unique(c(trawl, tend+0.1)))
   
   # trawls that are not in times are added to times
   tnew   <- trawl[!trawl %in% times]
@@ -76,7 +86,7 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
           ntimes=ntimes, B0=B0, K=as.double(K), r=as.double(r), 
           d=as.double(d), times=as.double(times), events=as.double(events), 
           B=matrix(nrow=nspec, ncol=ntimes, data=-0.999), 
-          dTrawl=matrix(ncol=nspec, nrow=nevent, data=-0.999))
+          dTrawl=matrix(nrow=nspec, ncol=nevent, data=-0.999))
   
   Bt <- cbind(times, t(DD$B)) # add dynamic results to times
 
@@ -97,10 +107,10 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
   else 
     taxon <- taxon[include]
 
-  colnames(Bt) <- c("times", as.vector(unlist(taxon)))
+  colnames(Bt) <- c("time", as.vector(unlist(taxon)))
 
   if (length(trawl)) {
-    dTrawl           <- DD$dTrawl
+    dTrawl           <- t(DD$dTrawl)
     colnames(dTrawl) <- unlist(taxon)
     dTrawl           <- cbind(times=trawl[order(trawl)], 
                               dTrawl[1:length(trawl),]) 
@@ -126,7 +136,7 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
 
     RES <- list()  
     for (i in 1:nC0){ 
-      C0 <- unlist(Cini[include,i])
+      C0 <- unlist(D0[include,i])
       ii <- which(C0 > 0)      
       # Multiply columns (relative densities) with true initial values
       res <- sweep(x      = Bt[,(ii+1)], # relative species densities in columns
@@ -149,7 +159,7 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
       class(res) <- c("deSolve", "matrix")
       RES[[i]] <- res
     }
-    names(RES) <- colnames(Cini)
+    names(RES) <- colnames(D0)
     return(RES)  
   }
 }
@@ -160,21 +170,29 @@ perturb <- function(parms,                 # list/data.frame with r, k, d
 ## ====================================================================
 ## ====================================================================
 
-logistic <- function(parms,                  # list/data.frame with r, k, m
-                     times,                  # output times, in years
-                     tendPerturb=max(times), # time at which perturbation stops
-                     taxon=parms["taxon"],   # names of taxa
-                     Cini=parms["K"],        # initial condition
-                     addsum=FALSE, 
-                     verbose=FALSE){
+run_logistic <- function(
+                  parms,                      # list/data.frame with r, k, m
+                  times,                      # output times, in years
+                  tend_perturb = max(times),  # time at which perturbation stops
+                  taxon   = parms[["taxon"]], # names of taxa
+                  D0      = parms[["K"]],     # initial condition
+                  addsum  = FALSE, 
+                  verbose = FALSE){
   
   if (is.vector(parms)) 
     parms <- as.list(parms)
   else parms <- as.data.frame(parms)
   
   pn <- names(parms)
-  if (any(!c("K", "r", "m") %in% pn))
+  
+  if (!"m"  %in% pn)  # try to estimate mortality from r, d, and sar
+    if (all(c("sar", "r", "d") %in% pn) )
+      parms$m <- with(parms, par_m(sar=sar, r=r, d = d, K=K)) ## ADDED K=K
+  pn <- names(parms)
+  
+  if (any(!c("K", "r", "m") %in% pn)){
     stop ("'parms' should contain values for 'K', 'r', 'm' in continuos logistic model ")
+  }
   r  <- parms[["r"]]
   K  <- parms[["K"]]
   m  <- parms[["m"]]
@@ -188,24 +206,24 @@ logistic <- function(parms,                  # list/data.frame with r, k, m
     include <- include[-omit] 
   }
   
-  C0  <- Cini
+  C0  <- D0
   nC0 <- 1  
   
-  if (is.data.frame(Cini) | is.matrix(Cini)) {
-    if (nrow(Cini) != nrow(parms))
-      stop(" 'Cini' should have as many rows as 'parms'")
-    nC0 <- ncol(Cini)
+  if (is.data.frame(D0) | is.matrix(D0)) {
+    if (nrow(D0) != nrow(parms))
+      stop(" 'D0' should have as many rows as 'parms'")
+    nC0 <- ncol(D0)
     
     # If more runs need to be done: 
     # model runs with relative density first, i.e. with C0=1
     # then these are multiplied with the actual initial densities (using sweep)
     if (nC0 > 1) {
-      if (any(is.character(Cini[,1]))) 
-        stop("'first column of Cini contains strings - should be numeric")
+      if (any(is.character(D0[,1]))) 
+        stop("'first column of D0 contains strings - should be numeric")
       C0 <- rep(1, times=length(r))
     }
-  } else if (length(Cini) == 1) 
-    C0 <- rep(Cini, times=length(r))
+  } else if (length(D0) == 1) 
+    C0 <- rep(D0, times=length(r))
 
   C0 <- unlist(C0)
   r  <- r[include]
@@ -217,10 +235,11 @@ logistic <- function(parms,                  # list/data.frame with r, k, m
   ntimes <- as.integer(length(times))
   B0     <- as.double(C0)
  
-  t1    <- times[times <= tendPerturb]  # times with perturbations
+  t1    <- times[times <= tend_perturb]  # times with perturbations
   lent1 <- length(t1)
-  t1    <- unique(c(t1, tendPerturb))  # times with perturbations
-  t2    <- times[times > tendPerturb]             # times without perturbations
+  t1    <- unique(c(t1, tend_perturb))   # times with perturbations
+  t2    <- times[times > tend_perturb]   # times without perturbations
+  
   Logistic <- function(i, t){
     rn <- r[i]-m[i]
     D  <- C0[i]
@@ -229,7 +248,7 @@ logistic <- function(parms,                  # list/data.frame with r, k, m
   
   B  <- outer(X=1:nspec, Y=t1, FUN=function(X,Y)Logistic(X,Y))
   if (length(t2) >= 1){  
-   t2 <- t2-tendPerturb 
+   t2 <- t2 - tend_perturb 
    m[] <- 0
    C0  <- B[, ncol(B)]
    B2 <- outer(X=1:nspec, Y=t2, FUN=function(X,Y)Logistic(X,Y))
@@ -259,7 +278,7 @@ logistic <- function(parms,                  # list/data.frame with r, k, m
   else 
     taxon <- taxon[include]
 
-  colnames(Bt) <- c("times", as.vector(unlist(taxon)))
+  colnames(Bt) <- c("time", as.vector(unlist(taxon)))
 
   ADDsum <- function(run)  # rowSums does not work on a vector
     if (ncol(run) >2)  
@@ -274,11 +293,11 @@ logistic <- function(parms,                  # list/data.frame with r, k, m
     class(Bt) <- c("deSolve", "matrix")
     return(Bt)
     
-  } else { # Model applied for many 'station' - return a list of matrices
+  } else { # Model applied for many 'station's - return a list of matrices
 
     RES <- list()  
     for (i in 1:nC0){ 
-      C0 <- unlist(Cini[include,i])
+      C0 <- unlist(D0[include,i])
       ii <- which(C0 > 0)      
       # Multiply columns (relative densities) with true initial values
       res <- sweep(x      = Bt[,(ii+1)], # relative species densities in columns
@@ -291,7 +310,7 @@ logistic <- function(parms,                  # list/data.frame with r, k, m
       class(res) <- c("deSolve", "matrix")
       RES[[i]] <- res
     }
-    names(RES) <- colnames(Cini)
+    names(RES) <- colnames(D0)
     return(RES)  
   }
 }
