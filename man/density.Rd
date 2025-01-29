@@ -1,13 +1,14 @@
 \name{density }
 \alias{density_perturb}
 \alias{density_logistic}
+\alias{density_metier}
 
 \title{
-  Estimates density at specific times for the logistic and perturbation model.
+  Estimates density at specific times for the logistic and perturbation model. \code{density_metier} allows to specify different metiers.
 }
 
 \description{
- \code{density_perturb} and \code{density_logistic} calculates the density at specific times for the perturbation and continuous model respectively. 
+ \code{density_perturb}, \code{density_metier}, and \code{density_logistic} calculates the density at specific times for the perturbation (one metier, several metiers) and the continuous model respectively. Fishing is implemented as swept area ratios.
 
 }
 
@@ -17,6 +18,11 @@ density_perturb (K = 1, r = 1, d = 0.1,
                 sar = 1, D0 = parms[["K"]], times = 1, 
                 tend_perturb = max(times), as.deSolve = FALSE)
 
+density_metier (K = 1, r = 1, parms = data.frame(K = K, r = r),
+                d = data.frame(0.1, 0.1), sar = data.frame(1, 2),   
+                D0 = parms[["K"]], times = 1, 
+                tend_perturb = max(times), as.deSolve = FALSE)
+
 density_logistic(K = 1, r = 1, m = 0.1, 
                 parms = data.frame(K = K, r = r, m = m),
                 D0 = parms[["K"]], times = 1,
@@ -24,11 +30,11 @@ density_logistic(K = 1, r = 1, m = 0.1,
 }
 
 \arguments{
-  \item{sar }{fishing intensity, estimated as Swept Area Ratio, units e.g. [m2/m2/year]. One number. Will be ignored if a column named "sar" is present in \code{parms}.
+  \item{sar }{fishing intensity, estimated as Swept Area Ratio, units e.g. [m2/m2/year]. For \code{density_perturb}: one number; this will be ignored if a column named "sar" is present in \code{parms}. For \code{density_metier}, a data.frame with one value per metier. 
   }
-  \item{r }{the rate of increase of each taxon, units e.g. [/year]. One number, or a vector.
+  \item{r }{the rate of increase of each taxon, units e.g. [/year]. One number, or a vector (one value per taxon).
   }
-  \item{d }{depletion fraction due to fishing. One number, or a vector of same length as \code{r}.
+  \item{d }{depletion fraction due to fishing. For \code{density_perturb}: one number, or a vector of same length as \code{r}.  For \code{density_metier}, a data.frame with nrows = length(r), and ncols = number of metiers, containing one number per metier and per taxon.
   }
   \item{m }{mortality rate. One number, or a vector of same length as \code{r}.
   }
@@ -173,16 +179,78 @@ legend("topright",
                    "density_logistic"),
         lty = c(1, NA), pch = c(NA, 18))       
 
+
+## ====================================================
+## Several metiers, one taxon
+## ====================================================
+
+times <- seq(0, 10, length.out = 1000)
+
+sar = data.frame(1, 2) # 2 metiers
+
+M1 <- density_metier (times = times,
+                      K   = 1, r = 1, 
+                      d   = data.frame(0.1, 0.1), 
+                      sar = sar, 
+                      as.deSolve = TRUE)
+
+# Compare with one metier run,                       
+P1 <- density_perturb(times = times, 
+                      K = 1, r = 1, d = 0.1, 
+                      sar = sum(sar),  # sum of sar
+                      as.deSolve = TRUE)
+
+plot(P1, M1, lty = 1, main = "one or two metiers", 
+     las = 1, lwd = 2)
+legend("topright", col = 1:2, lty = 1, lwd = 2,
+        legend = c("sar = 3", "sar = (1, 2)"))
+
+## ====================================================
+## Several metiers, multiple taxa
+## ====================================================
+
+times <- seq(0, 10, length.out = 1000)
+
+# 4 taxa, 3 metiers
+d <- data.frame(sar1 = c(0.1, 0.2, 0.15, 0.2), 
+                sar2 = c(0.2, 0.3, 0.25, 0.1),
+                sar3 = c(0.1, 0.3, 0.01, 0.1))
+                
+K <- c(2,  1,   3, 10)
+r <- c(1,  2, 1.5,  2)    
+
+sar <- data.frame(1, 2.5, 1.3)
+M1 <- density_metier (times = times,
+                      K = K, r = r,
+                      d   = d, 
+                      sar = sar, 
+                      as.deSolve = TRUE)
+
+# compare with the single metier model
+
+# average depletion
+d1 <- (d[,1]*sar[[1]] + d[,2]*sar[[2]] + d[,3]*sar[[3]])/sum(sar)                      
+
+P1 <- density_perturb(times = times, 
+                      K = K, r = r, 
+                      d = d1,
+                      sar = sum(sar),
+                      as.deSolve = TRUE)
+
+plot(P1, M1, lty = 1, 
+     las = 1, lwd = 2)
+legend("topright", col = 1:2, lty = 1, lwd = 2,
+        legend = c("sar = 4.3", "sar = (1, 2, 1.3)"))
+mtext(side = 3, line = -2, "one or multiple metiers", outer = TRUE) 
+
 }
 
 \seealso{
-\link{density_trawl} for density before, after trawling and mean density inbetween trawling.
+\link{trawl_perturb} for density before, after trawling and mean density inbetween trawling.
 
 \link{steady_perturb} for steady-state calculations.
 
-\link{run_perturb} for how to run a disturbance model.
-
-\link{run_perturb} for how to run a disturbance model.
+\link{run_perturb} for how to run a disturbance model with unregularly spaced events.
 
 \link[Btrait]{Traits_nioz}, for trait databases in package Btrait.
 

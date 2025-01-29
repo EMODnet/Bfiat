@@ -4,7 +4,7 @@ Title: Bottom Fishing Impact Assessment Tools
 Author: Karline Soetaert <karline.soetaert@nioz.nl>,
         Olivier Beauchard <olivier.beauchard@nioz.nl>
 Maintainer: Karline Soetaert <karline.soetaert@nioz.nl>
-Depends: R (>= 3.5.0), deSolve, Btrait
+Depends: R (>= 4.1), deSolve, Btrait
 Suggests: worrms, knitr, rmarkdown
 Description: Tools for estimating the impact of bottom disturbance on sediment ecosystems.
 VignetteBuilder: knitr

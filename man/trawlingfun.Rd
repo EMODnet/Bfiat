@@ -6,7 +6,7 @@
 }
 
 \description{
- \code{run_perturb} applies a logistic model to estimate the depletion and recovery of benthic taxa from (a sequence of) bottom disturbing (e.g. trawling) events.
+ \code{run_perturb} applies a logistic model to estimate the depletion and recovery of benthic taxa from (a sequence of) bottom disturbing (e.g. trawling) events.  Fishing can be implemented by specifiying the perturbation events.
 
  \code{run_logistic} applies a logistic model with constant mortality.
 }

@@ -440,11 +440,11 @@ par_m(sar = 2,
 
 ## Density after pertubation, and steady-state density
 
-Function *density_perturb* estimates densities at selected times, while *density_trawl* estimates the density after the n-th trawling event.
+Function *density_perturb* estimates densities at selected times, while *trawl_perturb* estimates the density before and after the n-th trawling event.
 
 ```{r, echo=FALSE, comment=NA}
 Def_fun(density_perturb)
-Def_fun(density_trawl)
+Def_fun(trawl_perturb)
 ```
 
 ```{r}
@@ -453,12 +453,12 @@ density_perturb(sar = 1,
              d   = 0.2, 
              times  = seq(0, 2, by = 0.5))
 
-density_trawl(sar = 2, 
+trawl_perturb(sar = 2, 
               r   = 0.5, 
               d   = 0.2, 
               n   = 10)
 
-density_trawl(sar = 2:10, 
+trawl_perturb(sar = 2:10, 
               r   = 0.5, 
               d   = 0.2, 
               n   = 1)

@@ -92,6 +92,21 @@ par_K <- function(density,  # current densities
                   d,        # -, depletion fraction due to fishing
                   t_density = NULL) # time at which density was estimated; NULL=steady-state
                          {    
+  
+  if (is.data.frame(d)){ # multiple metiers
+    if (! is.data.frame(sar))
+      stop ("if 'd' is a data.frame, then 'sar' should also be one (metier-dependent)")
+    # value of d: weighted mean; value of sar: sum of sar
+    ss <- sar
+    dd <- d
+    
+    sar  <- rowSums(ss)
+    rsar <- as.matrix(ss/sar)
+
+    d <- rowSums(sweep(as.matrix(dd), MARGIN = 2, STATS = rsar, FUN= "*"))
+    
+  }
+  
   # To check if all have same length or are compatible
   DATA <- data.frame(density=density, sar=sar, r=r, d=d, K = 1)
   
@@ -107,8 +122,6 @@ par_K <- function(density,  # current densities
     ########### NEED TO CHANGE THIS  ################
     # value at t_density, starting with K=1
     
-    #SUBROUTINE eventdensity2(nspec, B0, sar,                         & 
-    #                           K, r, d, eventnr, B)
     DATA$times = t_density
     D_t <- density_perturb2(parms = DATA[, c("r", "d", "K", "times")], 
                            sar   = DATA$sar)$density

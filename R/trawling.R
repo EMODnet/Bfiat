@@ -82,7 +82,7 @@ run_perturb <- function(
   ntimes <- as.integer(length(times))
   B0     <- as.double(C0)
     
-  DD <- .Fortran("logistictrawl", nspec=nspec, nevent=nevent, 
+  DD <- .Fortran("perturb_times", nspec=nspec, nevent=nevent, 
           ntimes=ntimes, B0=B0, K=as.double(K), r=as.double(r), 
           d=as.double(d), times=as.double(times), events=as.double(events), 
           B=matrix(nrow=nspec, ncol=ntimes, data=-0.999), 

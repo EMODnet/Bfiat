@@ -6,9 +6,10 @@
 
 !===============================================================================
 ! Calculates the analytical solution of the logistic model with ct mortality
+! for specific times
 !===============================================================================
 
-       SUBROUTINE logistic(nspec, ntimes, B0,                                   & 
+       SUBROUTINE logistic_time(nspec, ntimes, B0,                              & 
                            K, r, m, times, tendperturb, B)
           
        IMPLICIT NONE
@@ -47,6 +48,6 @@
             END DO  ! with J    
          END DO     ! with N
 
-       END SUBROUTINE logistic
+       END SUBROUTINE logistic_time
        
        

@@ -77,4 +77,9 @@ To uninstall the package manually, type the following command in the R-console (
   ```
 
 ---
+
+During the transition from version 0.01 to version 1.0.0 the names of many functions have changed. Also, the function names in package Btrait, used by Bfiat, have changed. This means that any code that uses these old versions will need to be adapted.
+
 First upload: 22/02/2024
+
+Last major change: 29/01/2025

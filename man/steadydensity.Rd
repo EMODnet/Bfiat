@@ -1,9 +1,10 @@
 \name{steady-state density }
-\alias{steady_perturb}
 \alias{steady_logistic}
+\alias{steady_perturb}
+\alias{steady_metier}
 
 \title{
-  Estimate steady-state density for logistic and perturbation model.
+  Estimate steady-state density for logistic and perturbation model for one and more metiers.
 }
 
 \description{
@@ -15,6 +16,11 @@
 steady_perturb  (K = 1, r = 1, d = 0.1, 
                 parms = data.frame(K = K, r = r, d = d), 
                 sar = 1, D0 = parms[["K"]], tol = 1e-06)
+
+steady_metier  (K = 1, r = 1,  
+                parms = data.frame(K = K, r = r), 
+                d = data.frame(0.1, 0.1), sar = data.frame(1, 2), 
+                D0 = parms[["K"]], tol = 1e-06)
 
 steady_logistic (K = 1, r = 1, m = 0.1, 
                 parms = data.frame(K = K, r = r, m = m), 
@@ -41,13 +47,24 @@ steady_logistic (K = 1, r = 1, m = 0.1,
 }
 
 \value{
- returns a data.frame with 
+ for \code{steady_perturb}: returns a data.frame with 
  \itemize{
-  \item \code{density}, the estimated densities at steady-state,
+  \item \code{k, r, d, sar, D0}, the input parameters,
+  \item \code{density_before, density_after}, density before and after trawling at steady-state,
+  \item \code{density}, the estimated densities, averaged over the trawling interval at steady-state,
   \item \code{ntrawl}, the number of trawls where this was attained,
-  \item \code{time}, the time when steady-state was reached.
+  \item \code{time}, the time when steady-state was reached (within tol).
 }
+
+ for \code{steady_logistic}: returns a data.frame with 
+ \itemize{
+  \item \code{k, r, m, D0}, the input parameters,
+  \item \code{density}, the estimated densities at steady-state,
+  \item \code{time}, the time when steady-state was reached (within tol).
 }
+
+}
+
 
 \author{
   Karline Soetaert <karline.soetaert@nioz.nl>
@@ -57,8 +74,18 @@ steady_logistic (K = 1, r = 1, m = 0.1,
 
 \examples{
 
+
 ## ====================================================
-## Several inputs - compare with analytic formula
+## Several inputs logistic model
+## ====================================================
+
+SL  <- steady_logistic(r   = 1, 
+                       K   = 1, 
+                       m = seq(0.01, 0.5, length.out = 100), 
+                       tol = 1e-9)
+
+## ====================================================
+## Several inputs perturbation model
 ## ====================================================
 
 S1  <- steady_perturb(r   = 0.5, 
@@ -67,8 +94,11 @@ S1  <- steady_perturb(r   = 0.5,
                       sar = seq(0.1, 4, length.out = 100), 
                       tol = 1e-9)
 
+## - compare with analytic formula
+
 # Steady-state density can also be estimated using this formula
-# (from Pritchard, 2017): D* = 1+ sar/r * log(1-d)
+# (from Pritchard, 2017): D = 1+ sar/r * log(1-d)
+
 S1$DD <- with (S1, 1 + sar/r * log(1-d))
 
 # The min and max density is also estimated with steady_perturb

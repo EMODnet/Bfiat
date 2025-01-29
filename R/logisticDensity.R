@@ -44,7 +44,7 @@ density_logistic <- function(K = 1, r = 1, m = 0.1,
   
     ntimes <- length(times)
   
-    DD <- .Fortran("logistic", nspec = nspec, ntimes = ntimes,
+    DD <- .Fortran("logistic_time", nspec = nspec, ntimes = ntimes,
                  B0    = as.double(parms$D0),
                  K     = as.double(parms$K), 
                  r     = as.double(parms$r), 

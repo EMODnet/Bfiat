@@ -4,6 +4,24 @@
 ## ====================================================================
 ## ====================================================================
 
+steady_metier  <- function (K = 1, r = 1,  
+                parms = data.frame(K = K, r = r), 
+                d = data.frame(0.1, 0.1), sar = data.frame(1, 2), 
+                D0 = parms[["K"]], tol = 1e-06){
+  
+  # value of d: weighted mean; value of sar: sum of sar
+  rS <- rowSums(sar)
+  ss <- as.matrix(sar/rowSums(sar))
+  dd <- rowSums(sweep(as.matrix(d), MARGIN = 2, STATS = ss, FUN= "*"))
+  sp <- steady_perturb(K = parms$K, r = parms$r, 
+                       d = dd, sar = rS, D0 = D0, tol = tol)
+  names(d)   <- paste("d", 1:ncol(d), sep="_")
+  names(sar) <- paste("sar", 1:ncol(sar), sep="_")
+  sp <- sp[, c("K", "r", "density", "ntrawl", "time")]
+  sp <- cbind(d, sar, sp)  
+  sp
+}
+
 steady_perturb <- function(K     = 1, r = 1, d = 0.1,  
                           parms = data.frame(K = K, r = r, d = d),
                           sar   = 1, D0 = parms[["K"]], 
@@ -34,7 +52,7 @@ steady_perturb <- function(K     = 1, r = 1, d = 0.1,
     
     nspec <- as.integer(nrow(parms))
     
-    DD <- .Fortran("steadydensity", nspec = nspec, 
+    DD <- .Fortran("perturb_steady", nspec = nspec, 
                    sar  = as.double(parms$sar), 
                    K    = as.double(parms$K), 
                    r    = as.double(parms$r), 
@@ -53,8 +71,8 @@ steady_perturb <- function(K     = 1, r = 1, d = 0.1,
     
     data.frame(parms,
                density_before = DD$steadybefore, # density before trawl
-               density_after  = DD$steadyafter, # density before trawl
-               density        = DD$steadymean, # density averaged
+               density_after  = DD$steadyafter,  # density before trawl
+               density        = DD$steadymean,   # density averaged
                ntrawl         = DD$steadytrawl,
                time           = DD$steadytimes)
     

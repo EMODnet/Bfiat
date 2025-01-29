@@ -3,28 +3,39 @@
 #  include <R.h>
 #endif
 
-void F77_NAME(logistictrawl)(int*, int*, int*, double*, double*,  
+void F77_NAME(perturb_times)(int*, int*, int*, double*, double*,  
       double*, double*, double*, double*, double*);
-void F77_NAME(logistictrawl2)(int*, int*, double*, double*,  
+void F77_NAME(perturb_times2)(int*, int*, double*, double*,  
               double*, double*, double*, double*, double*, double*);
-void F77_NAME(steadydensity)(int*, double*, double*,  
+
+void F77_NAME(perturb_steady)(int*, double*, double*,  
               double*, double*, double*, double*, double*,
               int*, double*, double*, double*, double*);
-void F77_NAME(eventdensity)(int*, int*, double*, double*, 
+
+void F77_NAME(perturb_event)(int*, int*, double*, double*, 
+              double*, double*, double*, int*, 
+              double*, double*, double*);
+void F77_NAME(perturb_event2)(int*,  double*, double*, 
               double*, double*, double*, int*, double*);
 
-void F77_NAME(eventdensity2)(int*,  double*, double*, 
-              double*, double*, double*, int*, double*);
-void F77_NAME(logistic)(int*, int*, double*, double*,  
+void F77_NAME(logistic_time)(int*, int*, double*, double*,  
               double*, double*, double*, double*, double*);
 
+void F77_NAME(metier_time)(int*, int*, int*, double*, double*,   
+              double*, double*, double*, double*, double*, double*);
+void F77_NAME(metier_event)(int*, int*, int*, double*, double*,   
+              double*, double*, double*, int*, 
+              double*, double*, double*, double*);
+
 R_FortranMethodDef fortranMethods[] = {
- {"logistictrawl",  (DL_FUNC) &F77_SUB(logistictrawl),   8},
- {"logistictrawl2", (DL_FUNC) &F77_SUB(logistictrawl2),  8},
- {"steadydensity",  (DL_FUNC) &F77_SUB(steadydensity),  13},
- {"eventdensity",   (DL_FUNC) &F77_SUB(eventdensity ),   9},
- {"eventdensity2",  (DL_FUNC) &F77_SUB(eventdensity2),   8},
- {"logistic",       (DL_FUNC) &F77_SUB(logistic),        9},
+ {"perturb_times",  (DL_FUNC) &F77_SUB(perturb_times),   8},
+ {"perturb_times2", (DL_FUNC) &F77_SUB(perturb_times2),  8},
+ {"perturb_steady", (DL_FUNC) &F77_SUB(perturb_steady), 13},
+ {"perturb_event",  (DL_FUNC) &F77_SUB(perturb_event ), 11},
+ {"perturb_event2", (DL_FUNC) &F77_SUB(perturb_event2),  8},
+ {"logistic_time",  (DL_FUNC) &F77_SUB(logistic_time),   9},
+ {"metier_time",    (DL_FUNC) &F77_SUB(metier_time),    11},
+ {"metier_event",   (DL_FUNC) &F77_SUB(metier_event),   13},
  {NULL, NULL, 0}
 };
 void R_init_bfiat(DllInfo *info) {
