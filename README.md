@@ -17,7 +17,7 @@
 <br>
 
 <br>
-The R- package is created in the framework of the EMODnet biology project.
+The R-package Bfiat is created in the framework of the EMODnet biology project, the NECCTON (New Copernicus Capability for Trophic Ocean Networks) project, and in cooperation with the ICES Working Group on Fisheries Benthic Impact and Trade-offs (WGFBIT).
 
 <br><br>
 <img src="man/figures/useR-logo.png" width="200">
