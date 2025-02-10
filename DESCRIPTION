@@ -3,6 +3,13 @@ Version: 1.0.0
 Title: Bottom Fishing Impact Assessment Tools
 Author: Karline Soetaert <karline.soetaert@nioz.nl>,
         Olivier Beauchard <olivier.beauchard@nioz.nl>
+Authors@R: c(
+    person(given = "Karline", family = "Soetaert", role = c("aut", "cre"),
+           email = "karline.soetaert@nioz.nl", 
+           comment = c(ORCID = "0000-0003-4603-7100")),
+    person(given = "Olivier", family = "Beauchard", role = "aut",
+           comment = c(ORCID = "0000-0002-3885-6010"))
+  )        
 Maintainer: Karline Soetaert <karline.soetaert@nioz.nl>
 Depends: R (>= 4.1), deSolve, Btrait
 Suggests: worrms, knitr, rmarkdown
@@ -10,4 +17,4 @@ Description: Tools for estimating the impact of bottom disturbance on sediment e
 VignetteBuilder: knitr
 License: GPL
 LazyData: yes
-URL: https://emodnet.github.io/Bfiat/
+URL: https://EMODnet.github.io/Bfiat/

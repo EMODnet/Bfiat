@@ -8,15 +8,23 @@
 density_perturb <- function(K   = 1, r = 1, d = 0.1, 
                           parms = data.frame(K = K, r = r, d = d),
                           sar   = 1, 
+                          taxon_names = parms[["taxon"]], # names of taxa
                           D0    = parms[["K"]], 
                           times = 1,  # time(s) to estimate density
-                          tend_perturb = max(times),
-                          as.deSolve = FALSE){
+                          tstart_perturb = min(times) + 0.5/sar, 
+                          tend_perturb = max(times), 
+                          as.deSolve = TRUE){
+
+  taxon_names <- unlist(taxon_names)  # Before parms is changed
+  if (is.null(taxon_names))   
+    taxon_names <- row.names(parms)
+  
   pn <- names(parms)
   if (any(!c("K", "r", "d") %in% pn)){
     stop ("'parms' should contain values for 'K', 'r', 'd' in discrete models")
   }
   
+  tstart_perturb[sar <= 0] <- times[length(times)]+1
   if ("times" %in% names(parms)){
     dens <- density_perturb2(parms = parms, 
                            sar   = sar, 
@@ -29,8 +37,10 @@ density_perturb <- function(K   = 1, r = 1, d = 0.1,
     
     # So that all these parameters are the same length
     if (! "sar" %in% names(parms))
-       parms  <- data.frame(parms, sar = sar, D0 = D0)
-
+       parms  <- data.frame(parms, sar = sar)
+    
+    parms  <- data.frame(parms, D0 = D0)
+    
     pn <- names(parms)
     if (any(!c("K", "r", "d", "sar") %in% pn)){
       stop ("'parms' should contain values for 'K', 'r', 'd', 'sar' ")
@@ -45,7 +55,6 @@ density_perturb <- function(K   = 1, r = 1, d = 0.1,
        wisna          <- apply(parms, MARGIN=1, FUN=function(x) any(is.na(x)))
        parms[wisna, ] <- 1
        ntimes <- length(times)
-       
        DD <- .Fortran("perturb_times2", nspec = nspec, ntimes = ntimes,
                       B0    = as.double(parms$D0),
                       K     = as.double(parms$K), 
@@ -53,6 +62,7 @@ density_perturb <- function(K   = 1, r = 1, d = 0.1,
                       d     = as.double(parms$d), 
                       sar   = as.double(parms$sar),
                       times = as.double(times), 
+                      tstart_perturb = as.double(tstart_perturb[1]),                     
                       tend_perturb = as.double(tend_perturb[1]),
                       B = matrix(nrow = nspec, ncol = ntimes, data = -999.)
        )
@@ -67,7 +77,11 @@ density_perturb <- function(K   = 1, r = 1, d = 0.1,
        } else {
            Res <- cbind(times, t(DD$B))
            colnames(Res)[1] <- "times"
-           colnames(Res)[-1] <- row.names(parms)
+           
+           if (is.null(taxon_names))
+             taxon_names <- paste("tax", 1:(ncol(Res)-1), sep="_")
+           colnames(Res)[-1] <- taxon_names
+
            class(Res) <- c("deSolve", class(Res))
        }
    }
@@ -115,10 +129,17 @@ density_metier <- function(K   = 1, r = 1,
                            parms = data.frame(K = K, r = r),
                            d     = data.frame(0.1, 0.1), 
                            sar   = data.frame(1, 2), 
+                           taxon_names = parms[["taxon"]], # names of taxa
                            D0    = parms[["K"]], 
                            times = 1,  # time to estimate density
+                           tstart_perturb = min(times) + 0.5/sar, 
                            tend_perturb = max(times),
-                           as.deSolve = FALSE){
+                           as.deSolve = TRUE){
+  
+  taxon_names <- unlist(taxon_names)  # Before parms is changed
+  if (is.null(taxon_names))   
+    taxon_names <- row.names(parms)
+
   pn <- names(parms)
   if (any(!c("K", "r") %in% pn)){
     stop ("'parms' should contain values for 'K', 'r' in density_metier")
@@ -160,8 +181,11 @@ density_metier <- function(K   = 1, r = 1,
   if (is.data.frame(sar))
     sar <- as.matrix(sar)
   
-  tend_perturb <- rep(tend_perturb, length.out = nmetier)
-
+  tend_perturb   <- rep(tend_perturb,   length.out = nmetier)
+  tstart_perturb <- rep(tstart_perturb, length.out = nmetier)
+  
+  tstart_perturb[is.infinite(tstart_perturb)] <- times[length(times)]+1
+  
   # check for NA in inputs
     wisna          <- apply(parms, MARGIN=1, FUN=function(x) any(is.na(x)))
     parms[wisna, ] <- 1
@@ -176,7 +200,8 @@ density_metier <- function(K   = 1, r = 1,
                    d     = as.double(d),  
                    sar   = as.double(sar),  
                    times = as.double(times), 
-                   tend_perturb = as.double(tend_perturb),
+                   tstart_perturb = as.double(tstart_perturb),
+                   tend_perturb   = as.double(tend_perturb),
                    B     = matrix(nrow = nspec, ncol = ntimes, data = -999.)
     )
     
@@ -190,7 +215,10 @@ density_metier <- function(K   = 1, r = 1,
     } else {
       Res <- cbind(times, t(DD$B))
       colnames(Res)[1] <- "times"
-      colnames(Res)[-1] <- row.names(parms)
+      if (is.null(taxon_names))
+        taxon_names <- paste("tax", 1:(ncol(Res)-1), sep="_")
+      
+      colnames(Res)[-1] <- taxon_names
       class(Res) <- c("deSolve", class(Res))
     }
    return(Res)

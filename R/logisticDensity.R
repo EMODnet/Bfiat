@@ -7,10 +7,16 @@
 
 density_logistic <- function(K = 1, r = 1, m = 0.1, 
                             parms = data.frame(K = K, r = r, m = m),
+                            taxon_names = parms[["taxon"]], 
                             D0    = parms[["K"]], 
                             times = 1, # time to estimate density
+                            tstart_perturb = min(times), 
                             tend_perturb = max(times),
-                            as.deSolve = FALSE){ 
+                            as.deSolve = TRUE){ 
+  
+  taxon_names <- unlist(taxon_names)  # Before parms is changed
+  if (is.null(taxon_names))   
+    taxon_names <- row.names(parms)
   
   if (! is.data.frame(parms)) parms <- as.data.frame(parms)  
   pn <- names(parms)
@@ -34,8 +40,16 @@ density_logistic <- function(K = 1, r = 1, m = 0.1,
       
   } else {
     
- 
-  
+    if (! is.data.frame(parms)) parms <- as.data.frame(parms)  
+    
+    pn <- names(parms)
+    if (any(!c("K", "r", "m") %in% pn)){
+      stop ("'parms' should contain values for 'K', 'r', 'm'")
+    }
+    
+    # So that all these parameters are the same length
+    parms  <-data.frame(parms[, c("K", "r", "m")], D0 = D0)
+    
     nspec  <- nrow(parms)
   
   # check for NA in inputs
@@ -50,6 +64,7 @@ density_logistic <- function(K = 1, r = 1, m = 0.1,
                  r     = as.double(parms$r), 
                  m     = as.double(parms$m), 
                  times = as.double(times), 
+                 tstart_perturb = as.double(tstart_perturb[1]),
                  tend_perturb = as.double(tend_perturb[1]),
                  B = matrix(nrow = nspec, ncol = ntimes, data = -999.)
     )
@@ -64,7 +79,11 @@ density_logistic <- function(K = 1, r = 1, m = 0.1,
     } else {
       Res <- cbind(times, t(DD$B))
       colnames(Res)[1] <- "times"
-      colnames(Res)[-1] <- row.names(parms)
+      if (is.null(taxon_names))
+        taxon_names <- paste("tax", 1:(ncol(Res)-1), sep="_")
+      
+      colnames(Res)[-1] <- taxon_names
+      
       class(Res) <- c("deSolve", class(Res))
     }
   }

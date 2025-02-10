@@ -5,9 +5,9 @@ citEntry(entry="manual",
   author = personList(as.person("Karline Soetaert"),
                       as.person("Olivier Beauchard")),
   organization  =	"Netherlands Institute of Sea Research",
-  note = "Data product created under the European Marine Observation Data Network (EMODnet) Biology Phase V.",
+  note = "Data product created under the European Marine Observation Data Network (EMODnet) Biology Phase V, and under the NECCTON project (New Copernicus Capability for Trophic Ocean Networks).",
   keywords =	"trawling, density, traits, ecosystem functions",
   textVersion =  paste("Karline Soetaert, Olivier Beauchard (2024).",
                        "R-package Bfiat: Tools for estimating the impact of bottom disturbance on sediment ecosystems.",
-                       "Data product created under the European Marine Observation Data Network (EMODnet) Biology Phase V projec, and under the NECCTON project (New Copernicus Capability for Trophic Ocean Networks).")
+                       "Data product created under the European Marine Observation Data Network (EMODnet) Biology Phase V, and under the NECCTON project (New Copernicus Capability for Trophic Ocean Networks).")
 )

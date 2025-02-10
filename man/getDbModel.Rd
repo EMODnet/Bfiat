@@ -10,15 +10,19 @@
 }
 
 \usage{
-get_Db_model(model, trait=Btrait::Traits_Db, taxonomy = NULL,  
-             weight, verbose = FALSE, na.rm=FALSE)  
+get_Db_model(model, trait = Btrait::Traits_Db, 
+             taxon_names = colnames(model)[-1], taxonomy = NULL,  
+             weight, verbose = FALSE, na.rm = FALSE)  
 
-get_irr_model(model, trait=Btrait::Traits_irr, taxonomy = NULL,  
-            weight, verbose = FALSE, na.rm=FALSE)  
+get_irr_model(model, trait = Btrait::Traits_irr, 
+              taxon_names = colnames(model)[-1], taxonomy = NULL,  
+              weight, verbose = FALSE, na.rm = FALSE)  
 }
 
 \arguments{
-  \item{model}{ dynamic model output that describes how taxa change over time. This is a matrix with (time x taxon) information, such as generated from the function \link{run_perturb}. The first column should contain the time, and the other columns the taxon density over time, with the column names the actual taxon names. (see note for the consequences of this.)
+  \item{model}{ dynamic model output that describes how taxa change over time. This is a matrix with (time x taxon) information, such as generated from the function \link{run_perturb} or \code{density+perturb}. The first column should contain the time, and the other columns the taxon density trajectories over time, with the column names the taxon names, if not in \code{taxon.name}. (see note for the taxon names)
+  }
+  \item{taxon_names}{ names of the taxa, one for each column in \code{model}, except the first column. A vector of length = ncol(model) - 1. These names will be matched with the trait database, and optionally with \code{weight} if this is a two-columned matrix/data.frame.
   }
   \item{trait}{ (taxon x trait) data. For \code{get_Db_model}, \code{traits} should contain the columns \code{Ri} and \code{Mi} (with the reworking and mobility traits). For use in \code{get_irr_model}, \code{traits} should contain columns \code{BT} and \code{FT}, and \code{ID}, the burrowing type, feeding type, and injection depth respectively. The trait matrix should have the names of the taxa in its first column. A good choice of a trait database for estimating bioturbation potentials is \link[Btrait]{Traits_Db}; a good choice for estimating bioirrigation potentials is \link[Btrait]{Traits_irr}.
   }
@@ -28,7 +32,7 @@ get_irr_model(model, trait=Btrait::Traits_irr, taxonomy = NULL,
   }
   \item{taxonomy }{taxonomic information; first column will be matched with \code{taxon}, regardless of its name.
   }
-  \item{weight }{a \code{data.frame} with taxon (first column) versus weight (2nd column) characteristics for each taxon in the \code{model}.
+  \item{weight }{either a vector with a value for each trajectory in model (and with length = ncol(model) - 1), or a \code{data.frame} with taxon (first column) versus weight (2nd column) characteristics for each taxon in the \code{model}.
   }
 }
 
@@ -45,7 +49,18 @@ The result has in its attributes a vector called "Factor", which is the constant
 }
 
 \note{
-The names of the columns in \code{model} should have the taxon names, that are also found in the trait database. This can create a problem if the model output is a \code{data.frame} and the taxon names contain blancs. In this case, the names will have "." rather than " ". This can be solved either (1) by making the names in the trait database consistent with the model output (use R-function \code{make.names()} to convert names with spaces to good names, as used in data.frames), or (2) by adding, to model an attribute called taxon.names that has the actual taxon names (in the order of the columns); (attributes(model)$taxon.names  <- taxon.names).
+*** About taxon names ****
+
+The names of the columns in \code{model} should have the taxon names, that are also found in the trait database. This can create a problem if the model output is a \code{data.frame} and the taxon names contain blancs. In this case, the names will have "." rather than " ". 
+
+This can be solved by either 
+\itemize{
+
+\item (1) by making the names in the trait database consistent with the model output (use R-function \code{make.names()} to convert names with spaces to good names, as used in data.frames), or 
+\item (2) by specifying the true names in argument \code{taxon_names} that has the actual taxon names (in the order of the columns).
+}
+
+*** Formulae ****
 
 \itemize{
  \item{get_Db_model}: The formula for estimating the bioturbation Index for taxon i (as in Querios et al., 2013) is:

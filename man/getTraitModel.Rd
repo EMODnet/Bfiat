@@ -9,19 +9,22 @@
 }
 
 \usage{
-get_trait_model(model, trait, trait.class = NULL, trait.score = NULL, 
-                taxonomy = NULL, t.column = 1, 
+get_trait_model(model, trait, trait_class = NULL, trait_score = NULL, 
+                taxon_names = colnames(model)[-1], 
+                taxonomy = NULL, taxon_column = 1, 
                 scalewithvalue = TRUE, verbose = FALSE)
 }
 
 \arguments{
   \item{model}{ dynamic model output that describes how taxa change over time. This is a matrix with (time x taxon) information, such as generated from the function \link{run_perturb}. The first column should contain the time, and the other columns the taxon density over time, with the column names the actual taxon names. (see note for the consequences of this.)
   }
-  \item{trait}{ (taxon x trait) data or (descriptor x trait) data, in *WIDE* format, and containing numerical values only. Traits can be fuzzy coded. The trait matrix should have the name of the taxon in its first column (if \code{t.column=1}); it is also allowed to have the taxon names as row.names (if \code{t.column=0}).   
+  \item{taxon_names}{ names of the taxa, one for each column in \code{model}, except the first column. A vector of length = ncol(model) - 1. These names will be matched with the trait database, and optionally with \code{weight} if this is a two-columned matrix/data.frame.
   }
-  \item{trait.class }{a vector with indices to trait levels for each modality in matrix \code{trait}. The length of this vector should equal the number of columns of \code{trait} minus the value of \code{t.column}. If present, this -together with \code{trait.score}- will be used to convert the trait matrix from fuzzy to crisp format.
+  \item{trait}{ (taxon x trait) data or (descriptor x trait) data, in *WIDE* format, and containing numerical values only. Traits can be fuzzy coded. The trait matrix should have the name of the taxon in its first column (if \code{taxon_column=1}); it is also allowed to have the taxon names as row.names (if \code{taxon_column=0}).   
   }
-  \item{trait.score }{trait values or scores for each modality, a vector. Should be of the same length as \code{trait.class}
+  \item{trait_class }{a vector with indices to trait levels for each modality in matrix \code{trait}. The length of this vector should equal the number of columns of \code{trait} minus the value of \code{taxon_column}. If present, this -together with \code{trait_score}- will be used to convert the trait matrix from fuzzy to crisp format.
+  }
+  \item{trait_score }{trait values or scores for each modality, a vector. Should be of the same length as \code{trait_class}
   }
   \item{scalewithvalue }{when TRUE, will standardize with respect to total density, so that the average trait value is obtained (not the summed value). 
   }
@@ -29,7 +32,7 @@ get_trait_model(model, trait, trait.class = NULL, trait.score = NULL,
   }
   \item{taxonomy }{taxonomic information; first column will be matched with \code{taxon}, regardless of its name. When present, the unknown traits will be estimated based on taxonomic closeness of each taxon.
   }
-  \item{t.column }{position(s) or name(s) of the column(s) that hold the taxa (of data.frame \code{trait}). The default is to have the first column holding the taxa. If \code{NULL}, or \code{0}, then there is no separate column with names, so the \code{row.names} of the dataset are used as taxon names.
+  \item{taxon_column }{position(s) or name(s) of the column(s) that hold the taxa (of data.frame \code{trait}). The default is to have the first column holding the taxa. If \code{NULL}, or \code{0}, then there is no separate column with names, so the \code{row.names} of the dataset are used as taxon names.
   }
 }
 
@@ -140,15 +143,15 @@ Btaxonomy <- data.frame(
 TraitRun1 <- get_trait_model (
                         model       = trawl1run,  
                         trait       = Btraits, 
-                        trait.class = Btraits.lab$trait, 
-                        trait.score = Btraits.lab$score, 
+                        trait_class = Btraits.lab$trait, 
+                        trait_score = Btraits.lab$score, 
                         verbose     = FALSE)
                         
 TraitRun2 <- get_trait_model (
                         model       = trawl2run,  
                         trait       = Btraits, 
-                        trait.class = Btraits.lab$trait, 
-                        trait.score = Btraits.lab$score, 
+                        trait_class = Btraits.lab$trait, 
+                        trait_score = Btraits.lab$score, 
                         verbose     = FALSE)
                         
 attributes(TraitRun1)$notrait   # species that was ignored

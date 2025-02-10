@@ -8,9 +8,10 @@ run_perturb <- function(
                     parms,                     # list/data.frame with r, k, d
                     times,                     # output times, in years
                     sar = 1,
+                    tstart_perturb = min(times) + 0.5/sar,
                     tend_perturb = max(times), # time at which perturbation stops
                     events = NULL,             # times of trawling events
-                    taxon  = parms[["taxon"]], # names of taxa
+                    taxon_names  = parms[["taxon"]], # names of taxa
                     D0     = parms[["K"]],       # initial condition
                     addsum = FALSE, 
                     verbose = FALSE){
@@ -22,7 +23,9 @@ run_perturb <- function(
   if (length(sar) > 1) stop ("sar should be one number")
   
   if (is.null(events)) 
-    events <- seq(from = times[1], by = 1/sar, to = tend_perturb)
+    events <- seq(from = max(times[1], tstart_perturb), 
+                  by   = 1/sar, 
+                  to   = tend_perturb)
   
   pn <- names(parms)
   if (any(!c("K", "r", "d") %in% pn))
@@ -99,7 +102,7 @@ run_perturb <- function(
   if (length(tnew))                             
     Bt <- Bt[-which(times%in% tnew), ]
   
-  taxon <- unlist(taxon)
+  taxon <- unlist(taxon_names)
   if (is.null(taxon))   
     taxon <- paste("tax", 1:(ncol(Bt)-1), sep="_")
   else if (is.factor(taxon)) 
@@ -173,8 +176,9 @@ run_perturb <- function(
 run_logistic <- function(
                   parms,                      # list/data.frame with r, k, m
                   times,                      # output times, in years
+                  tstart_perturb = min(times),
                   tend_perturb = max(times),  # time at which perturbation stops
-                  taxon   = parms[["taxon"]], # names of taxa
+                  taxon_names   = parms[["taxon"]], # names of taxa
                   D0      = parms[["K"]],     # initial condition
                   addsum  = FALSE, 
                   verbose = FALSE){
@@ -233,30 +237,68 @@ run_logistic <- function(
 
   nspec  <- as.integer(length(C0))
   ntimes <- as.integer(length(times))
-  B0     <- as.double(C0)
- 
-  t1    <- times[times <= tend_perturb]  # times with perturbations
-  lent1 <- length(t1)
-  t1    <- unique(c(t1, tend_perturb))   # times with perturbations
-  t2    <- times[times > tend_perturb]   # times without perturbations
-  
+
   Logistic <- function(i, t){
     rn <- r[i]-m[i]
     D  <- C0[i]
     rn*K[i]*D/(r[i]*D + (rn*K[i]-r[i]*D)*exp(-rn*(t)))
   }
   
-  B  <- outer(X=1:nspec, Y=t1, FUN=function(X,Y)Logistic(X,Y))
+  Logistic2 <- function(i, t){  # No mortality
+    rn <- r[i]
+    D  <- C0[i]
+    rn*K[i]*D/(r[i]*D + (rn*K[i]-r[i]*D)*exp(-rn*(t)))
+  }
+  
+  tb    <- times[1]
+  t0    <- times[times < tstart_perturb]  # times with perturbations
+  B0    <- NULL
+  if (length(t0)) {
+    t0 <- t0 - tb
+    B0 <- outer(X   = 1:nspec, 
+                Y   = t0, 
+                FUN = function(X,Y) Logistic2(X,Y)) # no fish mortality
+    C0 <- outer(X   = 1:nspec, 
+                Y   = tstart_perturb, 
+                FUN = function(X,Y) Logistic2(X,Y)) # no fish mortality
+    tb <- tstart_perturb
+  }
+  
+  t1    <- times[times >= tstart_perturb & 
+                 times <= tend_perturb]  # times with perturbations
+  lent1 <- length(t1)
+  
+  t1    <- t1 - tb
+  
+  B  <- outer(X   = 1:nspec, 
+              Y   = t1, 
+              FUN = function(X,Y)Logistic(X,Y))
+  
+  C0 <- outer(X   = 1:nspec, 
+              Y   = tend_perturb, 
+              FUN = function(X,Y) Logistic(X, Y)) # no fish mortality
+  
+  if (nrow(B) > 1)
+    B <- cbind(B0, B)
+  else 
+    B <- c(B0, B)
+  
+  t2    <- times[times > tend_perturb]   # times without perturbations
+  
   if (length(t2) >= 1){  
    t2 <- t2 - tend_perturb 
-   m[] <- 0
-   C0  <- B[, ncol(B)]
-   B2 <- outer(X=1:nspec, Y=t2, FUN=function(X,Y)Logistic(X,Y))
+   B2  <- outer(X   = 1:nspec, 
+                Y   = t2, 
+                FUN = function(X,Y) Logistic2(X,Y))
    if (nrow(B2) > 1)
-     B <- cbind(B[,1:lent1], B2)
-   else B <- c(B[1:lent1], B2)
-   if (is.vector(B)) B <- matrix(nrow=1, data=B)
+     B <- cbind(B, B2)
+   else 
+     B <- c(B, B2)
+   
   }
+  
+  if (is.vector(B)) B <- matrix(nrow = 1, data = B)
+  
 #  DD <- .Fortran("logistic", nspec=nspec, 
 #          ntimes=ntimes, B0=B0, K=as.double(K), r=as.double(r), 
 #          d=as.double(d), times=as.double(times), events=as.double(events), 
@@ -270,7 +312,7 @@ run_logistic <- function(
     if (verbose) warning("carrying capacity of one species probably=0")
   }
   
-  taxon <- unlist(taxon)
+  taxon <- unlist(taxon_names)
   if (is.null(taxon))   
     taxon <- paste("tax", 1:(ncol(Bt)-1), sep="_")
   else if (is.factor(taxon)) 

@@ -1,13 +1,22 @@
 ---
 title: "Bfiat: Modelling trawling effects on ecosystem functioning"
-author: "Karline Soetaert"
-date: "14 August 2022"
+author: "Karline Soetaert and Olivier Beauchard"
 output:
-  pdf_document: default
+  html_document:
+    df_print: paged
+    toc: true
+    number_sections: true
+    toc_float: true
+    code_folding: show
+    theme: cosmo
+abstract: "Bfiat is an R-package to estimate the impact of bottom trawling on organism density at the taxon level, and on ecosystem functioning. In this vignette we demonstrate the use of the package using simple examples."
 vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteIndexEntry{Bfiat: Modelling trawling effects on ecosystem functioning}
   %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  markdown:
+    wrap: sentence
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +32,7 @@ This document describes how to estimate the impact of bottom fisheries on sedime
 
 This R-package contains a data-driven mechanistic model that describes how species density is being reduced by bottom trawling, and then recovers till the next fishing event. 
 
-The outcome of this biological module are trajectories of species densities over time. As the species densities change, also their impact on sediment biogeochemistry, via the bioturbation and bio-irrigation activity changes. 
+The outcome of this biological module are trajectories of species (taxon) densities over time. As the species densities change, also the ecosystem functions delivered by the community change.  
 
 
 # Two logistic growth models including fisheries 
@@ -40,7 +49,7 @@ The parameters $r_i$ and $K_i$ are specific for species $i$; the carrying capaci
 
 ## Fisheries events
 
-To include the impact of fisheries in the logistic growth model, we can assume that trawling occurs as a series of *events*, that instantaneoously decimate populations. Inbetween these events the populations recover. 
+To include the impact of fisheries in the logistic growth model, we can assume that trawling occurs as a series of *events*, that instantaneously decimate populations. In between these events the populations recover. 
 Such fishing models consist of two parts:
 
 1. When the sediment is trawled, at times $t_j$, the density of each species $i$, is instantaneously depleted with a fraction $d_i$, so that only a fraction $1-d_i$ remains:
@@ -49,7 +58,7 @@ $$D_i^{t_j^+} = D_i^{t_j^-} \times (1-d_i),$$
 Here $D_i^{t_j^+}$ and $D_i^{t_j^-}$ are the density after and before trawling occurs at time $t_j$ respectively, and $d_i$ is the depletion fraction. 
 The higher is the depletion factor $d_i$, the more the density of the species after trawling will have been reduced.
 
-2. Inbetween fishing, the population restores according to the logistic growth equation 
+2. In between fishing, the population restores according to the logistic growth equation 
 $$\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}).$$
 
 The \emph{annual swept area ratio, S}, the proportion of a grid cell swept by fishing gear per year, is used to estimate the mean *time in between fishing events* : $\Delta T = \frac{1}{S}$, in years. From this, the times of the fishing events can be estimated, e.g. as $T_j = T_{j-1} + \Delta T$, where we assume equally spaced fishing events. 
@@ -63,13 +72,31 @@ $$\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}) - m_i  \cdot D_i,$$
 
 where $m_i$ is the constant mortality induced upon the species $i$.
 
-# R-package Bfiat. 
+# R-package Bfiat 
 
 The R-package *Bfiat* (Soetaert and Beauchard, 2024) contains:
 
-* Functions to estimate bottom trawling impacts on density and ecosystem functions.
+* Functions to estimate bottom trawling impacts on density 
+```{r, echo = FALSE}
+ll <- ls("package:Bfiat")
+lf <- ll[grep("_", ll)]
+
+l1 <- lf[!grepl("get_", lf)]
+l1[!grepl("par_", l1)]
+```
+
+* Functions to estimate bottom trawling impacts on ecosystem functions.
+```{r, echo = FALSE}
+lf[grepl("get_", lf)]
+```
 * Functions to calculate fishing parameters.
-* Two datasets to apply the Bfiat functions.
+```{r, echo = FALSE}
+lf[grepl("par_", lf)]
+```
+* Datasets to apply the Bfiat functions.
+```{r, echo=FALSE}
+ll[!grepl("_", ll)]
+```
 
 ```{r, echo=FALSE}
 Def_fun <- function(name){
@@ -98,34 +125,41 @@ Def_fun <- function(name){
 
 ## Trawling events
 
-Function *run_perturb* estimates the impact of bottom disturbances on benthic taxa; it is defined as:
+Functions *density_perturb* and *run_perturb* estimate the impact of bottom disturbances on benthic taxa. Both functions implement the same model, but require slightly different inputs. For instance, function *run_perturb* accepts randomly spaced trawling times (via argument *events*), while *density_perturb* does not.
+
+Function *density_metier*  allows to input several metiers, each with their own sar and depletion fraction.
+
+They are defined as:
 
 ```{r, echo=FALSE, comment=NA}
+Def_fun(density_perturb)
+Def_fun(density_metier)
 Def_fun(run_perturb)
 ```
 
-As an example, we use the function to estimate trawling impact on one species, with trawling occurring either once or twice per year ($S1=1, S2=2$). The trawling lasts for 10 years, after which the sediment remains untrawled for another 10 years.
+As an example, we estimate trawling impact on one species, with trawling occurring either once or twice per year ($S1=1, S2=2$). The trawling lasts for 10 years, after which the sediment remains untrawled for another 10 years.
 
 ```{r, fig.cap="Two trawling impact runs, for a species with [r=0.5/yr, K=10 ind, d=0.1]; trawling lasts for 10 years, followed by a recovery of 10 years"}
 times <- seq(0, 20, length.out=1000)   # output times, years
 
 # species-specific parameters
-parms <- c(r = 0.5,   # [/yr], rate of increase
-           K = 10,    # [ind], carrying capacity
-           d = 0.1)   # [-]  , depletion fraction
+parms <- list(r = 0.5,   # [/yr], rate of increase
+              K = 10,    # [ind], carrying capacity
+              d = 0.1)   # [-]  , depletion fraction
 
 # run the model - one trawling event per year
-S1   <- 1  
-out1 <- run_perturb(times  = times, 
-                    events = seq(1/S1, by=1/S1, to=10), 
-                    parms  = parms)  
+out1 <- density_perturb(parms          = parms,
+                        times          = times, 
+                        tstart_perturb = 2,
+                        tend_perturb   = 10,
+                        sar            = 1.)  
                
 # run the model - two trawling events per year
-S2   <- 2  
-out2 <- run_perturb(times  = times, 
-                    events = seq(1/S2, by=1/S2, to=10), 
-                    parms  = parms)  
-
+out2 <- density_perturb(parms          = parms,
+                        times          = times, 
+                        tstart_perturb = 2,
+                        tend_perturb   = 10,
+                        sar            = 2.)  
 # show the results
 plot(out1, out2, 
      xlab = "years", 
@@ -134,15 +168,16 @@ plot(out1, out2,
      lty = 1, lwd = 2, las=1)
 
 legend("bottomright", 
-       legend=c("SAR=1/yr", "SAR=2/yr"), 
-       lty=1, col=1:2)
+       title = "sar",legend = c("1/yr", "2/yr"), 
+       lty = 1, col = 1:2)
 ```
 
 ## Constant trawling
 
-Function *logistic* implements a fishing model with constant mortality, and is defined as:
+Functions *density_logistic* and *run_logistic* implement a fishing model with constant mortality, and are defined as:
 
 ```{r, echo=FALSE, comment=NA}
+Def_fun(density_logistic)
 Def_fun(run_logistic)
 ```
 
@@ -153,32 +188,33 @@ As before we assume that fishing stops after 10 years. This can simply be set wi
 
 times <- seq(0, 20, length.out=1000)   # output times, years
 
-parms <- c(r = 0.5,   # [/yr], rate of increase
-           K = 10,    # [ind], carrying capacity
-           m = 0.1)   # [/yr], mortality rate
+parms <- list(r = 0.5,   # [/yr], rate of increase
+              K = 10,    # [ind], carrying capacity
+              m = 0.1)   # [/yr], mortality rate
 
-c1 <- run_logistic(times        = times, 
-                   tend_perturb = 10, 
-                   parms        = parms)
+c1 <- density_logistic(times          = times, 
+                       tstart_perturb = 2,
+                       tend_perturb   = 10, 
+                       parms          = parms)
 
 # increase mortality
 p2      <- parms
-p2["m"] <- 0.2
+p2$m    <- 0.2
 
-c2 <- run_logistic(times        = times, 
-                   tend_perturb = 10, 
-                   parms        = p2)
+c2 <- density_logistic(times          = times, 
+                       tstart_perturb = 2,
+                       tend_perturb   = 10, 
+                       parms          = p2)
 
 # Show results
 plot(c1, c2, 
-     xlab = "years", 
-     ylab = "density", 
+     xlab = "years", ylab = "density", 
      main = "Constant trawling", 
-     lty=1, lwd=2, las=1)
+     lty = 1, lwd = 2, las = 1)
 
 legend("bottomright", 
-       legend=c("m=0.2/yr", "m=0.4/yr"), 
-       lty=1, col=1:2)
+       legend = c("0.2/yr", "0.4/yr"), title = "m",
+       lty = 1, col = 1:2)
 ```
 
 ## Effect of trawling on several species
@@ -196,29 +232,64 @@ parms <- data.frame(
   d     = c( 0.5,  0.3,  0.1)   # depletion rate
 )
 
-# trawling events
-e1Trawl <- seq(from=0.5,  to=10, by= 1)
-e2Trawl <- seq(from=0.25, to=10, by=0.5)
-
 # run the model
-run1 <- run_perturb(parms=parms, 
-                    times=times, 
-                    events=NULL   )
+run1 <- density_perturb(parms          = parms, 
+                        times          = times, 
+                        tstart_perturb = 2,
+                        tend_perturb   = 10,
+                        sar            = 0   )
 
-run2 <- run_perturb(parms=parms, 
-                    times=times, 
-                    events=e1Trawl)
+run2 <- density_perturb(parms          = parms, 
+                        times          = times, 
+                        tstart_perturb = 2,
+                        tend_perturb   = 10,
+                        sar            = 1   )
 
-run3 <- run_perturb(parms=parms, 
-                    times=times, 
-                    events=e2Trawl)
-
+run3 <- density_perturb(parms          = parms, 
+                        times          = times, 
+                        tstart_perturb = 2,
+                        tend_perturb   = 10,
+                        sar            = 2   )
 # show the results
 plot(run1, run2, run3, 
      lty=1, lwd=2, mfrow=c(3,1), las=1)
 legend(x="bottomright", 
        legend=c("0", "1", "2"), title="trawls/year", 
        col=1:3, lty=1, lwd=2)
+```
+
+
+## Multiple metiers
+
+We can also simulate several metiers (fishing activities), each with their own depletion induced on the species:
+
+```{r, fig.width=10, fig.height=10, fig.cap="Trawling impacts on four species (s1, s2, s3 and s4) and for three metiers"}
+times <- seq(0, 20, length.out=1000)  # output times      [year]
+
+# Species names and parameters
+parms <- data.frame(
+  taxon = c("s1", "s2", "s3", "s4"),
+  K     = c(   2,   10,    4,     1),  # carrying capacity [/m2]
+  r     = c(   5,    2,  0.4,     1)   # rate of increase  [/year]
+)
+
+# 4 metiers
+
+sar  <- data.frame(m1 = 1, m2 = 0.7, m3 = 1.5)
+
+# depletion rate is species (rows) and metier- specific (columns)
+d    <- data.frame(m1 = c( 0.5,  0.3,   0.1,   0.3),  # metier 1
+                   m2 = c( 0.3,  0.6,   0.2,   0.2),  # metier 2
+                   m3 = c( 0.2,  0.1,  0.02,  0.05))
+# run the model
+runm <- density_metier(parms          = parms, 
+                       d              = d,
+                       times          = times, 
+                       tstart_perturb = c(0.5, 1, 1.5),
+                       tend_perturb   = 10,
+                       sar            = sar   )
+# show the results
+plot(runm, lty = 1, las=1, main = "3 metiers")
 ```
 
 # Trawling impacts on traits and ecosystem functions
@@ -247,14 +318,19 @@ knitr::kable(feedingtype)
 Then we calculate how both feeding types are affected by the trawling. 
 We first estimate the total numbers of both types, after which we also estimate the relative contribution (using argument *scalewithvalue*).
 
-```{r, fig.width=6, fig.height=6, fig.cap="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling"}
+```{r, fig.width=8, fig.height=8, fig.cap="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling"}
 FT  <- get_trait_model(model          = run2, 
                        trait          = feedingtype, 
                        scalewithvalue = FALSE)
-FT2 <- get_trait_model(run2, feedingtype)
 
-plot(FT,  mfrow=c(2,2), las=1)
-plot(FT2, mfrow=NULL, las=1)
+FT2 <- get_trait_model(model          = run2, 
+                       trait          = feedingtype)
+
+plot(FT, ylab = "/m2",  
+     mfrow = c(2, 2), las = 1)
+plot(FT2, ylab = "-",
+     main = c("fraction suspension feeding", "fraction deposit feeding"), 
+     mfrow = NULL, las = 1)
 ```
 
 Similarly, we can merge the model output for instance with mean weight of each taxon, where when *scalewithvalue=FALSE*, we will obtain the summed weights of all individuals, whereas if *scalewithvalue=TRUE*, we will obtain the mean weight of the entire community.
@@ -269,8 +345,10 @@ Lrun  <- get_trait_model(model = run2,
 Lrun2 <- get_trait_model(model = run2, 
                          trait = WW, 
                          scalewithvalue=FALSE)
-plot(Lrun,  main="mean weight",   mfrow=c(1,2), las=1)
-plot(Lrun2, main="summed weight", mfrow=NULL, las=1)
+plot(Lrun,  main = "mean weight", xlab = "g/ind",  
+     mfrow = c(1, 2), las = 1)
+plot(Lrun2, main = "summed weight", xlab = "g/m2",
+     mfrow = NULL, las = 1)
 ```
 
 ## Trawling impacts on ecosystem functions
@@ -281,6 +359,7 @@ Functions *get_Db_model*,  *get_irr_model* estimate the effect of species respon
 Def_fun(get_Db_model)
 Def_fun(get_irr_model)
 ```
+
 To calculate the *bioturbation index*, we need to input the relevant trait information. 
 This should be a data.frame, with the first column the name of the taxon, and followed by columns denoting the mobility  and reworking modes (values between 1-4 and 1-5 respectively). These columns should be named "Mi" and "Ri". 
 
@@ -334,7 +413,7 @@ The *depletion fraction* ($d_i$) for a certain species $i$ is implemented as:
 $$d_i = min \left[m_{max}, \sum_{z=[z_u, z_l]}  m_d \cdot max\left( 0, p_G-z_u\right) \cdot fi_{[z_u, z_l]}\right]$$
 where $z_u$ and $z_l$ are the upper and lower depth of the species' living space, $m$ is a coefficient that scales the depletion to the depth that the gear has penetrated in the species's living space (the sediment depth inbetween $z_u, z_l$), and where $fi_{[z_u, z_l]}$ is the fractional occurrence of species $i$ in that zone. The maximal depletion fraction is limited to the value $m_{max}$. 
 
-Good values for these parameters are $m_d = 0.075$ $cm^{-1}$ and $m_{max} = 0.45$. The function is defined as:
+Good values for these parameters are $m_d = 0.055$ $cm^{-1}$ and $m_{max} = 0.42$. The function is defined as:
 
 ```{r, echo=FALSE, comment=NA}
 Def_fun(par_d)
@@ -362,11 +441,11 @@ The depletion, using the default parameter settings, and for a gear penetration 
         uDepth = uDepth)
 
 ```
-Note that the deep-living species is not affected by none of the gears. 
+Note that the deep-living species is not affected by any of the gears. 
 
 ## Rate of increase
 
-Function *par_r* estimates the rate of increase (units $time^{-1}$), as a function of the species longevity (l_i) as follows: $$r_i=\frac{5.31}{l_i}.$$
+Function *par_r* estimates the rate of increase (units $time^{-1}$), as a function of the species age at maturity (a_i) as follows: $$r_i=\frac{4.165}{a_i}.$$
 It is defined as:
 
 ```{r, echo=FALSE, comment=NA}
@@ -374,13 +453,13 @@ Def_fun(par_r)
 ```
 
 ```{r, fig.width=6, fig.height=4, fig.cap="relationship between longevity and rate of increase"}
- Longevity <- seq(from=0, to=10, length.out=100)
- plot(x = Longevity, 
-      y = par_r(Longevity), 
-      xlab = "longevity, year", 
+ Age_mat <- seq(from = 0, to = 5, length.out=100)
+ plot(x    = Age_mat, 
+      y    = par_r(Age_mat), 
+      xlab = "age at maturity, year", 
       ylab = "r, /year", 
-      main = "relationship between longevity and r",
-      las=1)
+      main = "relationship between age at maturity and r",
+      las  = 1)
 ```
 
 ## Carrying capacity
@@ -417,10 +496,10 @@ Carrying capacity K can be estimated for a sequence of fishing intensities
       xlab = "Swept area ratio, /yr", 
       ylab = "K/D",
       main = "relationship between sar and K",
-      las=1)
+      las = 1, ylim = c(0, 10))
 ```
 
-Note that the higher the trawling intensity (or swept area ratio), the more the current density will deviate from the actual carrying capacity, so the K/sar ratio significantly increases with sar. Above a sar=2.25, the mortality becomes larger than the rate of increase, and the species should be extinct.
+Note that the higher the trawling intensity (or swept area ratio), the more the current density will deviate from the actual carrying capacity, so the K/sar ratio significantly increases with sar. Above a sar=2.25, the mortality becomes larger than the rate of increase, and the species is likely to be extinct.
 
 ## Continuous mortality coefficient
 
@@ -438,7 +517,7 @@ par_m(sar = 2,
 
 # Accessory functions
 
-## Density after pertubation, and steady-state density
+## Density at pertubation, and steady-state density
 
 Function *density_perturb* estimates densities at selected times, while *trawl_perturb* estimates the density before and after the n-th trawling event.
 
@@ -449,14 +528,14 @@ Def_fun(trawl_perturb)
 
 ```{r}
 density_perturb(sar = 1, 
-             r   = 0.5, 
-             d   = 0.2, 
-             times  = seq(0, 2, by = 0.5))
+                r   = 0.5, 
+                d   = 0.2, 
+                times  = seq(0, 2, by = 0.5))
 
 trawl_perturb(sar = 2, 
               r   = 0.5, 
               d   = 0.2, 
-              n   = 10)
+              n   = 10:12)
 
 trawl_perturb(sar = 2:10, 
               r   = 0.5, 
@@ -466,21 +545,21 @@ trawl_perturb(sar = 2:10,
 ```
 
 Function *steady_perturb* and *steady_logistic* estimate the density at steady state.
-For steady_perturb this is the density IMMEDIATELY BEFORE? a trawling event.
 
 ```{r, echo=FALSE, comment=NA}
 Def_fun(steady_perturb)
+Def_fun(steady_logistic)
 ```
 
 ```{r}
 (sD <- steady_perturb(K   = 1,
-                      sar = 2,
+                      sar = c(1, 2, 3),
                       r   = 0.5, 
                       d   = 0.2))
 
 # this is the inverse and should return K=1
 par_K(density = sD$density,
-      sar     = 2,
+      sar     = c(1, 2, 3),
       r       = 0.5, 
       d       = 0.2)
 ```
@@ -496,14 +575,16 @@ Dataset *NIOZdata* provides macrofauna density and biomass data at 4 sites in th
 ```{r, fig.width=6, fig.height=6, fig.cap="Stations in the NIOZdata dataset"}
 map_key(x        = NIOZdata$stations$x,
         y        = NIOZdata$stations$y, 
-        contours = NIOZdata$contours, 
-        by.levels = 5, draw.levels = TRUE, 
+        contours = NIOZdata$contours, colkey = FALSE,
+        col.levels = "grey", by.levels = 5, draw.levels = TRUE, 
         pch = 16)
 
 text(x      = NIOZdata$stations$x, 
-     y      = NIOZdata$stations$y+0.2, 
+     y      = NIOZdata$stations$y+0.5, 
      labels = NIOZdata$stations$station)
 ```
+
+The characteristics of NIOZdata, in terms of density and biomass are:
 
 ```{r, echo=FALSE}
 SD <- get_summary(data       = NIOZdata$density, 
@@ -519,7 +600,9 @@ SD2 <- get_summary(data       = NIOZdata$density,
 TD <- merge(SD$density, SD2$density, by=1)
 TD <- merge(TD, SD$taxa)
 names(TD) <- c("station", "density", "biomass", "numTaxa")
-knitr::kable(TD, digits=0, caption="Characteristics of datasets in NIOZdata: density (ind/m2), biomass (gWW/m2), number of taxa")
+TD <- merge(TD, NIOZdata$abiotics)
+knitr::kable(TD, digits=c(rep(0, times=6), rep(2, times=4)), 
+             caption="Characteristics of NIOZdata: density (ind/m2), biomass (gWW/m2), number of taxa, depth (m), % silt, sar (/yr), subsar (/yr) and gear penetration depth (cm)")
 ```
 
 ## Swept Area Ratio
@@ -549,7 +632,7 @@ with (SAR, image2D(
      clab = "#/yr", 
      xlab = expression(""^o~E), 
      ylab = expression(""^o~N),
-     log = "c", asp = 1.7, las = 1, clim=c(0.01,50),
+     log = "c", asp = 1.7, las = 1, clim=c(0.001,50),
      colkey = list(length=0.5, width=0.5), 
      col    = Colramp
 ))
@@ -562,7 +645,7 @@ with (SAR, image2D(
       clab = "#/yr", 
       xlab = expression(""^o~E), 
       ylab = expression(""^o~N),
-      log = "c", asp = 1.7, las = 1, clim=c(0.01,50),
+      log = "c", asp = 1.7, las = 1, clim=c(0.001,50),
       colkey = list(length=0.5, width=0.5), 
       col    = Colramp
 ))
@@ -573,7 +656,7 @@ with (SAR, image2D(
       clab = "cm",      
       xlab = expression(""^o~E), 
       ylab = expression(""^o~N),
-      log = "", asp = 1.7, las = 1, clim=c(0.01,3),
+      log = "c", asp = 1.7, las = 1, clim=c(1.5, 4.5),
       colkey = list(length=0.5, width=0.5), 
       col    = Colramp
 ))
@@ -602,7 +685,6 @@ mtext(outer=TRUE, side=3,"Annual Swept Area Ratio")
 
 Note: the R-package, *Btrait* (Soetaert and Beauchard, 2022) also contains density and trait data that can be used for fishery assessment. 
 
-
 \newpage
 
 
@@ -629,15 +711,67 @@ FF <-
 
 ## Fishing parameters
 
-Many species-specific model parameters that will be used in the trawl disturbance model have been gathered in data.frame called *NIOZdata$fishing*. 
+To estimate fishing effects, we need, for each taxon, the living depth (substratum depth distribution), and the age at maturity.
+
+We first find the names, and meaning of the traits in the NIOZ trait database (Traits_nioz, from package *Btrait*), and select the traits relating to living depth and age at maturity:
+
+```{r}
+traits.lab      <- metadata(Traits_nioz)
+
+# metadata of traits in database (name, value, ...)
+meta.depth     <- subset(traits.lab, 
+                         subset = trait == "Substratum depth distribution")
+
+meta.maturity  <- subset(traits.lab, 
+                         subset = trait == "Age at maturity")
+
+# select actual traits
+traits.depth    <- subset(Traits_nioz, 
+                          select = c("taxon", meta.depth$colname))
+
+traits.maturity <- subset(Traits_nioz, 
+                          select = c("taxon", meta.maturity$colname))
+```
+
+We then extract the traits for each species in the data, passing also the taxonomic relationships. This allows the traits to be estimated also for species that are not documented in the trait database. The taxonomy has been obtained from the worms database, and is stored in *NIOZdata$taxonomy*.
+
+The trait database records the traits in fuzzy format. For the depth distribution, we keep the data fuzzy, as some species may be found in different depth levels. 
+
+As we need the *mean* age at maturity, we also pass the trait class and value (argument trait_class, trait_score).
+
+```{r}
+taxa <- unique(NIOZdata$density$taxon)
+
+Depth    <- get_trait(taxon       = taxa, 
+                      trait       = traits.depth, 
+                      taxonomy    = NIOZdata$taxonomy)
+
+colnames(Depth)[-1] <- meta.depth$modality
+
+Maturity <- get_trait(taxon       = taxa, 
+                      trait       = traits.maturity, 
+                      taxonomy    = NIOZdata$taxonomy, 
+                      trait_class = meta.maturity$trait,
+                      trait_score = meta.maturity$value)
+
+Traits_combined <- merge(Depth, Maturity)
+```
+
+The age at maturity can now be used to estimate the intrinsic rate of natural increase:
+
+```{r}
+Traits_combined$r <- par_r(age_at_maturity = Traits_combined$Age.at.maturity)
+```
+
 
 This information is merged with the data.frame that contains the station-species information, where the common columns are the "taxon":
 
 ```{r}
-FF <- merge(FF, NIOZdata$fishing, by="taxon")
+FF <- merge(FF, Traits_combined, 
+            by = "taxon")
 ```
 
-For each station in the data set, the *Swept Area Ratio* (sar) and estimated gear penetrationd depth (gpd), averaged over the years 2009-2017 is stored in the *NIOZdata$abiotics* table; the sar and gpd for station FrieseFront is extracted and added to the parameter file:
+For each station in the data set, the *Swept Area Ratio* (sar) and estimated gear penetration depth (gpd), averaged over the years 2009-2017 is stored in the *NIOZdata$abiotics* table; the sar and gpd for station FrieseFront is extracted and added to the parameter file:
 
 ```{r}
 FF$sar <- subset(NIOZdata$abiotics, 
@@ -652,22 +786,14 @@ row.names(FF) <- NULL
 
 The *depletion* during trawling is estimated based on the depth of occurrence. 
 
-For species living on top of the sediment (*p0*), we assume that only the fraction that does not swim is vulnerable to be affected by trawling; they are added to the 0-5 cm fraction (*p0_5*):
+The depletion rate can now be estimated, based on the sar (`r FF$sar[1]`) and the gear penetration depth (`r FF$gpd[1]`). We use the function *par_d* to estimate the depletion rate.
 
 ```{r}
-FF$pSurf <- FF$p0*(1-FF$swim) + FF$p0_5
-```
-
-The depletion rate can now be estimated; we assume a gear penetration depth of 3.2 cm, this is the mean penetration of a beam trawler in fine sandy and muddy sediments. We use the function *par_d* to estimate the depletion rate.
-
-```{r}
-fDepth  <- FF[,c("pSurf", "p5_15", "p15_30", "p30")]
-uDepth  <-     c( 0,       5,       15,       30)
+fDepth  <- FF[,c("0", "0-5", "5-15", "15-30", ">30")]
+uDepth  <-     c( 0,   0,     5,      15,      30)
 
 FF$d <- par_d(gpd    = FF$gpd, # gear penetration depth
-              m_d    = 0.075,  # depth-dependence parameter
-              m_max  = 0.45,   # max mortality per species
-              fDepth = fDepth, # fractional occurrence in layers
+              fDepth = fDepth, # fractional occurrence in depth layers
               uDepth = uDepth) # upper depth of layers
 ```
 
@@ -684,8 +810,11 @@ The parameter file is now thinned, removing the columns we do not need any furth
 
 ```{r}
 pnames <- c("taxon", "density", "biomass_ww", "K", "r", "d", "sar")
-FF     <- FF[,pnames]
-knitr::kable(head(FF, n=10), digits=1)
+FF     <- FF[order(FF$taxon),pnames]
+```
+
+```{r}
+knitr::kable(head(FF, n=6), digits=1, row.names = FALSE)
 ```
 
 ## Model run
@@ -698,22 +827,28 @@ events <- seq(from = 1/FF$sar[1],
               by   = 1/FF$sar[1], 
               to   = 20)
 
+times  = seq(0, 40, length.out = 10000)
+
 # run the model
-dist.FF <- run_perturb(parms  = FF, 
-                       times  = seq(0, 40, length.out=1000), 
-                       events = events, 
-                       addsum = TRUE)
+fish.FF <- run_perturb(parms        = FF, 
+                       times        = times, 
+                       sar          = FF$sar[1],
+                       tend_perturb = 20,
+                       addsum       = TRUE)
 ```
 
 As the parameter file was ordered with respect to the species density, it is easy to plot the density trajectory for the 8 most abundant species (*which=1:8*); this is followed by the total density.
 
 ```{r, fig.width=8, fig.height=8, fig.cap="Fishing impact on the density of the 8 most abundant species, and the total density in station FrieseFront; 20 years of fishing followed by 20 years without fishing."}
-plot(dist.FF, 
-     which = 1:8, 
+
+Abundant <- FF$taxon[order(FF$K, decreasing = TRUE)]
+
+plot(fish.FF, 
+     which = Abundant[1:8], 
      ylab  = "ind/m2", 
      xlab  = "year", las=1)
 
-plot(dist.FF, 
+plot(fish.FF, 
      which = "sum", 
      ylab  = "ind/m2", 
      xlab  = "year", 
@@ -725,29 +860,30 @@ Using the previous model run, we estimate the impact of trawling on suspension f
 We first extract the modality "Suspension feeder" from the nioz trait database:
 
 ```{r}
-susp.meta <- subset(
-            metadata(Traits_nioz), 
-                     subset= (modality == "Suspension feeder"))
+meta.susp   <- subset(
+                    metadata(Traits_nioz), 
+                    subset= (modality == "Suspension feeder"))
 
-susp <- Traits_nioz[, c("taxon", susp.meta$colname)]
+traits.susp <- subset(Traits_nioz, 
+                      select = c("taxon", meta.susp$colname))
+colnames(traits.susp)[2] <- "SuspensionFeeder"
 ```
 
 The nioz trait database stores the trait modalities in fuzzy format, so the data record the fractional contribution of suspension feeding to the diet of each species:
 
 ```{r}
-colnames(susp)[2] <- "SuspensionFeeder"
-head(susp, n=3)
-
+head(traits.susp, n=3)
 ```
 
 We now calculate the degree to which suspension feeding changes in the community, using the function *get_trait_model*.
 For those species in the model whose suspension feeding is not known, we use the taxonomic closeness to find good values; this is simply done by passing data.frame *Taxonomy*.
 
 ```{r}
-susp1 <- get_trait_model(model    = dist.FF, 
-                         trait    = susp, 
-                         taxonomy = Taxonomy)
-plot(susp1)
+susp1 <- get_trait_model(model    = fish.FF, 
+                         trait    = traits.susp, 
+                         taxonomy = NIOZdata$taxonomy)
+plot(susp1, 
+     main = "Relative abundance suspension feeders", ylab = "-", las = 1)
 ```
 
 The bioturbation potential can be easily estimated by passing the correct database to the function *get_Db_model*. For this function, we also need the mean weight of the species which is calculated first (*WW*).
@@ -755,21 +891,23 @@ The bioturbation potential can be easily estimated by passing the correct databa
 ```{r}
 WW <- data.frame(taxon = FF$taxon, 
                  W     = FF$biomass_ww/FF$density)
-Db.FF <- get_Db_model(model    = dist.FF, 
+
+Db.FF <- get_Db_model(model    = fish.FF, 
                       trait    = Traits_Db, 
-                      taxonomy = Taxonomy, 
+                      taxonomy = NIOZdata$taxonomy, 
                       weight   = WW, 
                       na.rm    = TRUE)  # removes those species where W is NA
 ```
 
 ```{r, fig.width=8, fig.height=8, fig.cap="Fishing impact on the contribution to the bioturbation potential of the main species, and the total bioturbation potential in station FrieseFront; 20 years of fishing followed by 20 years without fishing."}
 plot(Db.FF, 
-     which = 1:8, 
-     ylab  = "ind/m2", las=1)
+     which = paste("BPc" , Abundant[1:8], sep="_"),
+     ylab  = "BPc, -", las = 1)
+
 plot(Db.FF, 
      which = "BPc", 
-     ylab  = "ind/m2", 
-     las=1, mfrow=NULL)
+     ylab  = "-", 
+     las = 1, mfrow = NULL)
 ```
 
 # Acknowledgements
@@ -845,13 +983,13 @@ head(LS)
 ```
 
 
-We now calculate the average life span using function *get_trait*. By passing the "trait.class" and "trait.score", the averages are estimated. We also pass the taxonomic tree of these data, so that the lifespan of taxa for which this is unknown is estimated based on taxonomic closeness.  
+We now calculate the average life span using function *get_trait*. By passing the "trait_class" and "trait_score", the averages are estimated. We also pass the taxonomic tree of these data, so that the lifespan of taxa for which this is unknown is estimated based on taxonomic closeness.  
 
 ```{r}
 MeanLS <- get_trait(taxon       = FF$taxon,
                     trait       = LS,
-                    trait.class = LSatt$trait,
-                    trait.score = LSatt$value,
+                    trait_class = LSatt$trait,
+                    trait_score = LSatt$value,
                     taxonomy    = NIOZdata$taxonomy)
 head(MeanLS)
 ```

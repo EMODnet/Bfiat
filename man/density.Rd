@@ -15,18 +15,26 @@
 \usage{
 density_perturb (K = 1, r = 1, d = 0.1, 
                 parms = data.frame(K = K, r = r, d = d),
-                sar = 1, D0 = parms[["K"]], times = 1, 
-                tend_perturb = max(times), as.deSolve = FALSE)
+                sar = 1, taxon_names = parms[["taxon"]], 
+                D0 = parms[["K"]], times = 1, 
+                tstart_perturb = min(times) + 0.5/sar, 
+                tend_perturb = max(times), 
+                as.deSolve = TRUE)
 
 density_metier (K = 1, r = 1, parms = data.frame(K = K, r = r),
                 d = data.frame(0.1, 0.1), sar = data.frame(1, 2),   
+                taxon_names = parms[["taxon"]], 
                 D0 = parms[["K"]], times = 1, 
-                tend_perturb = max(times), as.deSolve = FALSE)
+                tstart_perturb = min(times) + 0.5/sar, 
+                tend_perturb = max(times), 
+                as.deSolve = TRUE)
 
 density_logistic(K = 1, r = 1, m = 0.1, 
                 parms = data.frame(K = K, r = r, m = m),
+                taxon_names = parms[["taxon"]], 
                 D0 = parms[["K"]], times = 1,
-                tend_perturb = max(times), as.deSolve = FALSE)
+                tstart_perturb = min(times), tend_perturb = max(times), 
+                as.deSolve = TRUE)
 }
 
 \arguments{
@@ -42,13 +50,16 @@ density_logistic(K = 1, r = 1, m = 0.1,
   }
   \item{parms }{a data.frame with all parameters. If it also includes a column labeled "times" or "sar", then the argument(s) with the same name will be ignored.
   }
+  \item{taxon_names }{a vector with names of the taxa whose characteristics are present in \code{parms}. Should be of the same length as (the number of rows of) \code{parms}. When not present or \code{NULL}, and the parms vector does not have row.names, the taxa in the output will be labeled \code{"tax_1"}, \code{"tax_2"}, etc.
+  }
   \item{D0 }{initial density. One number, or a vector of length = nrow(parms).
   }
   \item{times }{time at which to estimate the density. One number, or a vector. Ignored if \code{parms} contains a column labeled \code{"times"}.
   }
-    \item{tend_perturb }{time at which the perturbation stops - from then on, no events will occur (\code{density_perturb}) or the mortality parameter will be set = 0 (\code{density_logistic}.
+    \item{tstart_perturb, tend_perturb }{time at which the perturbation starts and stops - before tsart_perturb and after tend_perturb, no events will occur (\code{density_perturb, density_metier}) or the mortality parameter will be set = 0 (\code{density_logistic}.
   }
-  \item{as.deSolve }{if \code{TRUE}, will return an object of class deSolve, where the first column is time}
+  \item{as.deSolve }{if \code{TRUE}, will return an object of class deSolve, where the first column is time; if \code{FALSE}, the first columns will contain the parameters, and the values for the \code{times} will make up the remaining columns.
+  }
 }
 
 \value{
@@ -123,12 +134,35 @@ density_logistic(K = 1, r = 1, m = 0.1,
 \examples{
 
 ## ====================================================
+## Simple runs
+## ====================================================
+
+times <- seq(0, 11, by = 0.01)
+T1 <- density_perturb (K = 100, D0 = 50,
+                       tstart_perturb = 2,
+                       tend_perturb   = 8,
+                       times = times)      
+
+T2 <- density_metier (K = 100, D0 = 50, sar = data.frame(1, 2),
+                       tstart_perturb = 1,
+                       tend_perturb   = 8,
+                       times = times)      
+
+T3 <- density_logistic (K = 100, r = 1, m = 0.7, D0 = 50, 
+                       tstart_perturb = 2, 
+                       tend_perturb   = 8,
+                       times = times)      
+
+plot(T1, T2, T3, lty = 1, lwd = 2)
+
+## ====================================================
 ## Compare density_perturb with dynamic run_perturb
 ## ====================================================
 
-times <- c(0.5, 1.5, 2.5, 8.5)
+times <- c(0, 0.5, 1.5, 2.5, 8.5)
 
 T1 <- density_perturb (K     = 100, 
+                       tstart_perturb = 0,
                        times = times)      
 T1
 
@@ -143,7 +177,7 @@ rP <- run_perturb(parms = list(K = 100, r = 1, d = 0.1),
 plot(rP, ylim = c(80, 100), las = 1, 
      main = "comparison density_perturb and run_perturb")
      
-points(x   = T1$times, y = T1$density, 
+points(T1, 
        pch = 16, cex = 2)
 
 legend("topright", 
@@ -155,7 +189,7 @@ legend("topright",
 ## Compare density_logistic with dynamic run_logistic
 ## ====================================================
 
-times <- c(0.5, 1.5, 2.5, 8.5)
+times <- c(0, 0.5, 1.5, 2.5, 8.5)
 
 T2 <- density_logistic(K     = 100, 
                        times = times)
@@ -171,14 +205,13 @@ rL <- run_logistic(parms = list(K = 100, r = 1, m = 0.1),
 plot(rL, ylim = c(80, 100), las = 1, 
      main = "comparison density_logistic and run_logistic")
      
-points(x   = T2$times, y = T2$density,   
+points(T2,   
        pch = 18, cex = 2)
 
 legend("topright", 
         legend = c("run_logistic", 
                    "density_logistic"),
         lty = c(1, NA), pch = c(NA, 18))       
-
 
 ## ====================================================
 ## Several metiers, one taxon

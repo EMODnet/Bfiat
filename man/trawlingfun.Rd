@@ -12,24 +12,27 @@
 }
 
 \usage{
-run_perturb (parms, times, sar = 1, tend_perturb = max(times),
-   events = NULL, taxon = parms[["taxon"]], 
-   D0 = parms[["K"]], addsum = FALSE, verbose = FALSE)
+run_perturb (parms, times, sar = 1, 
+             tstart_perturb = min(times) + 0.5/sar, tend_perturb = max(times),
+             events = NULL, taxon_names = parms[["taxon"]], 
+             D0 = parms[["K"]], addsum = FALSE, verbose = FALSE)
    
-run_logistic(parms, times, tend_perturb=max(times), taxon = parms[["taxon"]], 
-   D0 = parms[["K"]], addsum = FALSE, verbose = FALSE)
+run_logistic(parms, times, 
+             tstart_perturb = min(times), tend_perturb=max(times), 
+             taxon_names = parms[["taxon"]], 
+             D0 = parms[["K"]], addsum = FALSE, verbose = FALSE)
 }
 
 \arguments{
   \item{parms }{a vector, list, or data.frame with logistic parameters: for the function \code{run_perturb}, the parameters should be \code{r} (the rate of increase), \code{K} (carrying capacity), and \code{d}, the depletion factor during the event. For function \code{run_logistic}, it should contain either the parameters \code{r, K} and \code{m}, the constant mortality rate, or the parameters \code{K, r, sar}, and \code{d}, In the latter case, the parameter \code{m} will be estimated based on \code{sar, and d}. 
     }    
-  \item{taxon }{a vector with names of the taxa whose characteristics are present in \code{parms}. Should be of the same length as (the number of rows of) \code{parms}. When not present or \code{NULL}, the taxa in the output will be labeled \code{"tax_1"}, \code{"tax_2"}, etc.
+  \item{taxon_names }{a vector with names of the taxa whose characteristics are present in \code{parms}. Should be of the same length as (the number of rows of) \code{parms}. When not present or \code{NULL}, the taxa in the output will be labeled \code{"tax_1"}, \code{"tax_2"}, etc.
   }
   \item{sar }{fishing intensity, estimated as Swept Area Ratio, units e.g. [m2/m2/year], one number. Only used when \code{events} is \code{NULL}.
   }
   \item{times }{a vector with the output times of the model (sorted). The units of times should be consistent with the unit of parameter \code{r}; i.e. if \code{r} is expressed per year (1/y), then the time unit will be years.
   }
-  \item{tend_perturb }{time at which the perturbation stops - from then on, no events will occur (\code{run_perturb}) or the mortality parameter will be set = 0 (\code{run_logistic}.
+  \item{tstart_perturb, tend_perturb }{time at which the perturbation starts and stops - before                     tstart_perturb and after tend_perturb, no events will occur (\code{run_perturb}) or the mortality parameter will be set = 0 (\code{run_logistic}.
   }
   \item{events }{If not \code{NULL}, a vector with the times at which the disturbing event occurs. Event times that do not fall within \code{times} will be ignored. If \code{NULL}, then events will be estimated from \code{times}, \code{sar}, and \code{tend_perturb} as:  \code{seq(from = times[1], by = 1/sar, to = tend_perturb)}
   }
@@ -160,11 +163,11 @@ The reduced density is then used as initial condition for the dynamics in the ne
  plot(Trun)
 
 # expand the run with crisp trait information
-# (by passing trait.class and trait.score)
- Trun.crisp <- get_trait_model(model = T1, 
-                               trait = Btraits, 
-                               trait.class = Btraits.lab$trait, 
-                               trait.score = Btraits.lab$score, 
+# (by passing trait_class and trait_score)
+ Trun.crisp <- get_trait_model(model       = T1, 
+                               trait       = Btraits, 
+                               trait_class = Btraits.lab$trait, 
+                               trait_score = Btraits.lab$score, 
                                scalewithvalue = FALSE,  # to have total numbers
                                verbose     = FALSE
                             )
@@ -252,8 +255,8 @@ The reduced density is then used as initial condition for the dynamics in the ne
 
 # convert traits to crisp values, to estimate mean lifespan
   sp.Trait.crisp   <- fuzzy2crisp(trait       = Traits.ext, 
-                                  trait.class = Traits.lab$trait, 
-                                  trait.score = Traits.lab$value)
+                                  trait_class = Traits.lab$trait, 
+                                  trait_score = Traits.lab$value)
   Life.span <- sp.Trait.crisp$Life.span
 
 # Parameters r and d:

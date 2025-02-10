@@ -172,8 +172,8 @@
 ! Input of one sar per species 
 !===============================================================================
 
-       SUBROUTINE perturb_times2(nspec, ntimes, B0,                             & 
-                                 K, r, d, sar, times, tendperturb, B)
+       SUBROUTINE perturb_times2(nspec, ntimes, B0, K, r, d, sar,               & 
+                                 times, tstartperturb, tendperturb, B)
           
        IMPLICIT NONE
        
@@ -185,6 +185,7 @@
        DOUBLE PRECISION, INTENT(IN) :: r(nspec)    ! rate of increase
        DOUBLE PRECISION, INTENT(IN) :: d(nspec)    ! depletion fraction
        DOUBLE PRECISION, INTENT(IN) :: sar(nspec)  ! swept area ratio
+       DOUBLE PRECISION, INTENT(IN) :: tstartperturb ! first trawling
        DOUBLE PRECISION, INTENT(IN) :: tendperturb ! last trawling
       
        DOUBLE PRECISION, INTENT(IN) :: times(ntimes)  ! output times
@@ -196,32 +197,56 @@
        INTEGER :: J, N
        DOUBLE PRECISION :: dtevent, tnext, tprev, denom
     
+         
         DO N = 1, nspec
         
         ! start with an event => update initial cond.
         
          tprev   = times(1)
+         
          IF (sar(N) > 0.d0) THEN 
             dtevent = 1.d0 / sar(N)           ! time between events 
-            tnext = times(1)                 ! next event
+            
+            IF (tstartperturb == times(1)) THEN
+              tnext   = times(1)  + dtevent     ! next event
+              B0(N)   = B0(N)*(1.d0-d(N))       ! reduce density
+            
+            ELSE
+              tnext   = tstartperturb
+            ENDIF  
+            
          ELSE 
+         
             dtevent = times(ntimes) + 1.d0    ! fictively after last times
             tnext  = dtevent
+         
          END IF
          
          ! loop over all times except the first
-         B0(N)   = B0(N)*(1.d0-d(N))
          B(N, 1) = B0(N)
-         tnext = tnext + dtevent                 ! next event
+
          IF (tnext > tendperturb) tnext = times(ntimes) + 1.d0 
+         
          DO J = 2, ntimes
            
            DO WHILE (times(J) > tnext)    ! take care of the event(s) first
+           
               tprev  = tnext
-              Denom  = B0(N)+(K(N)-B0(N))*Dexp(-r(N)*dtevent)
-              B0(N)  = B0(N)*K(N)/Denom   ! new condition before the event
-              B0(N)  = B0(N)*(1.d0 -d(N)) ! new condition after the event
+              
+              ! new condition before the event
+              
+              IF (tnext > tstartperturb) THEN
+                Denom  = B0(N)+(K(N)-B0(N))*Dexp(-r(N)*dtevent)
+                B0(N)  = B0(N)*K(N)/Denom   
+              ELSE
+                Denom  = B0(N)+(K(N)-B0(N))*Dexp(-r(N)*(tstartperturb - times(1)))
+                B0(N)  = B0(N)*K(N)/Denom   
+              END IF              
+
+              ! new condition after the event
+              B0(N)  = B0(N)*(1.d0 -d(N)) 
               tnext  = tnext + dtevent 
+              
               IF (tnext > tendperturb) tnext = times(ntimes) + 1.d0 
            END DO
 

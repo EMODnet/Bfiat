@@ -12,13 +12,13 @@
  \itemize{
  \item{**\code{NIOZdata}**} is a list with 5 tables .  
   \itemize{
-   \item{density} a \code{data.frame} with the station names, taxon, density, biomass and date.  
+   \item{density} a \code{data.frame} with the station names, taxon, density, biomass (wet weight) and sampling date.  
    \item{stations} a \code{data.frame} with the station names, x and y positions, depth and the number of samples on which the data were based.
    \item{taxonomy} a \code{data.frame} with column names \code{taxon}, \code{genus}, \code{family}, \code{order}, \code{class}, \code{phylum} and \code{AphiaID}.  
-   \item{fishing} a \code{data.frame} with the species traits necessary for estimating the fishing parameters; columns are \code{taxon, p0, p0_5, p5_15, p15_30, p30, swim, Life.span, r}.  
+   \item{fishing} a \code{data.frame} with the species traits necessary for estimating the fishing parameters; columns are \code{taxon, 0, 0-5, 5-15, 15-30, >30, Age.at.maturity, r}.  
    \item{contours} a \code{list} with the x, y, z values of the contours (for use with \link[Btrait]{map_key} or  \link[Btrait]{map_legend}).  
    \item{abiotics} a \code{data.frame} with abiotic conditions (depth, D50, silt percentage).  
-   \item{sar} a \code{data.frame} with fishing intensities for the stations, per year; columns are \code{station, year, sar, subsar, gpd}.  
+   \item{sar} a \code{data.frame} with fishing intensities for the stations, per metier and per year; columns are \code{station, sandy, gear, year, sar, gpd}, where metier is: TBB, OT: beam, otter trawl; DRB: dredge, SN: seine.  
   }
   }
 }
@@ -115,8 +115,8 @@ NStrait.lab <- metadata(Traits_nioz)
 trait.cwm <- get_trait_density (wide           = NSwide, 
                                trait          = Traits_nioz, 
                                taxonomy       = NIOZdata$taxonomy,
-                               trait.class    = NStrait.lab$trait, 
-                               trait.score    = NStrait.lab$score, 
+                               trait_class    = NStrait.lab$trait, 
+                               trait_score    = NStrait.lab$score, 
                                scalewithvalue = TRUE)
 
 head(trait.cwm, n=c(4, 4))  

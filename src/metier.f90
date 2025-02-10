@@ -10,8 +10,8 @@
 !        depletion d: per species and metier
 !===============================================================================
 
-       SUBROUTINE metier_time   (nspec, nmetier, ntimes, B0,                    & 
-                                 K, r, d, sar, times, tendperturb, B)
+       SUBROUTINE metier_time   (nspec, nmetier, ntimes, B0, K, r, d,          & 
+                                 sar, times, tstartperturb, tendperturb, B)
           
        IMPLICIT NONE
        
@@ -24,6 +24,7 @@
        DOUBLE PRECISION, INTENT(IN) :: r(nspec)    ! rate of increase
 
        ! metier-specific parameters
+       DOUBLE PRECISION, INTENT(IN) :: tstartperturb(nmetier)
        DOUBLE PRECISION, INTENT(IN) :: tendperturb(nmetier) ! last trawling
        
        ! taxon x metier specific
@@ -55,8 +56,8 @@
          tnext = times(ntimes) +1.d0
          
          DO I = 1, nmetier
-           dtevent(I)       = 1d0/sar(N, I)
-           tnextmetier(I)   = times(1) + 0.5D0 * dtevent(I) 
+           dtevent(I)       = 1.d0/sar(N, I) 
+           tnextmetier(I)   = tstartperturb(I) 
            IF (tnextmetier(I) < tnext) tnext = tnextmetier(I)
          END DO
          
