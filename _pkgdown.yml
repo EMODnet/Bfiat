@@ -51,6 +51,18 @@ reference:
     - '`get_Db_model`'
     - '`get_irr_model`'    
     - '`get_trait_model`'    
+  - title: Sensitivity functions
+    desc: Sensitivity of an area or taxon to fishing parameters
+    contents: 
+    - '`sensitivity_taxon`'    
+    - '`sensitivity_area`'  
+  - title: Critical values
+    desc: Critical values for fishing or taxon parameters
+    contents: 
+    - '`critical_sar`'    
+    - '`critical_gpd`'  
+    - '`critical_d`'    
+    - '`critical_r`'    
   - title: Data sets
     contents: 
     - '`SAR`'
