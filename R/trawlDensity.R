@@ -131,7 +131,9 @@ eventDensity <- function(K   = 1, r = 1, d = 0.1,
   nspec  <- nrow(parms)
   
   # check for NA in inputs
-  wisna          <- apply(parms, MARGIN=1, FUN=function(x) any(is.na(x)))
+  wisna          <- apply(parms, 
+                          MARGIN = 1, 
+                          FUN = function(x) any(is.na(x)))
   parms[wisna, ] <- 1
   
   n[which(is.na(n))] <- 0
@@ -192,7 +194,9 @@ eventDensity2 <- function(K   = 1, r = 1, d = 0.1, n   = 1,
   nspec  <- nrow(parms)
 
   # check for NA in inputs
-  wisna          <- apply(parms, MARGIN=1, FUN=function(x) any(is.na(x)))
+  wisna          <- apply(parms, 
+                          MARGIN = 1, 
+                          FUN = function(x) any(is.na(x)))
   parms[wisna, ] <- 1
   
   ii <- which(parms$n == 0)

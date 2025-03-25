@@ -53,7 +53,9 @@ density_logistic <- function(K = 1, r = 1, m = 0.1,
     nspec  <- nrow(parms)
   
   # check for NA in inputs
-    wisna          <- apply(parms, MARGIN=1, FUN=function(x) any(is.na(x)))
+    wisna          <- apply(parms, 
+                            MARGIN = 1, 
+                            FUN = function(x) any(is.na(x)))
     parms[wisna, ] <- 1
   
     ntimes <- length(times)

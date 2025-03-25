@@ -269,8 +269,8 @@ times <- seq(0, 20, length.out=1000)  # output times      [year]
 # Species names and parameters
 parms <- data.frame(
   taxon = c("s1", "s2", "s3", "s4"),
-  K     = c(   2,   10,    4,     1),  # carrying capacity [/m2]
-  r     = c(   5,    2,  0.4,     1)   # rate of increase  [/year]
+  K     = c(   2,  10,    4,     1),  # carrying capacity [/m2]
+  r     = c(   5,   2,  0.4,     1)   # rate of increase  [/year]
 )
 
 # 4 metiers
@@ -278,6 +278,7 @@ parms <- data.frame(
 sar  <- data.frame(m1 = 1, m2 = 0.7, m3 = 1.5)
 
 # depletion rate is species (rows) and metier- specific (columns)
+#                          sp1   sp2    sp3    sp4
 d    <- data.frame(m1 = c( 0.5,  0.3,   0.1,   0.3),  # metier 1
                    m2 = c( 0.3,  0.6,   0.2,   0.2),  # metier 2
                    m3 = c( 0.2,  0.1,  0.02,  0.05))
@@ -289,7 +290,7 @@ runm <- density_metier(parms          = parms,
                        tend_perturb   = 10,
                        sar            = sar   )
 # show the results
-plot(runm, lty = 1, las=1, main = "3 metiers")
+plot(runm, lty = 1, las = 1) #, main = "3 metiers")
 ```
 
 # Trawling impacts on traits and ecosystem functions
@@ -613,8 +614,8 @@ They comprise:
 
 * *sar*:  the swept area ratio of the surface 0-2 cm
 * *subsar*: the swept area ratio of the subsurface (> 2cm),
-* *gpd*, the mean gear penetration depth, estimated as $\frac{1 \cdot (sar-subsar) + 3 \cdot subsar}{sar}$.
-* *lon*, *lat*, *x*, *y*, the coordinates of the points
+* *gpd*, the mean gear penetration depth, estimated based on the different metiers, i.e. 4.45, 1.55, 1.55, 2.55 cm for dredge, otter trawl, seine, beam trawl respectively (the mean of the gear penetration in mud and sand).
+* *lon*, *lat*, the coordinates of the points
 
 ```{r, fig.width=8, fig.height=12, echo = FALSE, caption="Fisheries intensity for the Northsea"}
 par(mfrow=c(2,2), oma=c(0,0,2,0))
@@ -632,11 +633,10 @@ with (SAR, image2D(
      clab = "#/yr", 
      xlab = expression(""^o~E), 
      ylab = expression(""^o~N),
-     log = "c", asp = 1.7, las = 1, clim=c(0.001,50),
-     colkey = list(length=0.5, width=0.5), 
+     log = "c", asp = 1.7, las = 1, clim=c(0.0001, 50),
+     colkey = list(length = 0.5, width = 0.5), 
      col    = Colramp
 ))
-
 lines(DD$x[keep],DD$y[keep])
 
 with (SAR, image2D(
@@ -645,10 +645,11 @@ with (SAR, image2D(
       clab = "#/yr", 
       xlab = expression(""^o~E), 
       ylab = expression(""^o~N),
-      log = "c", asp = 1.7, las = 1, clim=c(0.001,50),
-      colkey = list(length=0.5, width=0.5), 
+      log = "c", asp = 1.7, las = 1, clim = c(0.0001, 50),
+      colkey = list(length = 0.5, width = 0.5), 
       col    = Colramp
 ))
+lines(DD$x[keep],DD$y[keep])
 
 with (SAR, image2D(
       x = x, y = y, z = gpd, 
@@ -656,22 +657,22 @@ with (SAR, image2D(
       clab = "cm",      
       xlab = expression(""^o~E), 
       ylab = expression(""^o~N),
-      log = "c", asp = 1.7, las = 1, clim=c(1.5, 4.5),
-      colkey = list(length=0.5, width=0.5), 
+      log = "c", asp = 1.7, las = 1, clim = c(1.5, 4.5),
+      colkey = list(length = 0.5, width = 0.5), 
       col    = Colramp
 ))
+lines(DD$x[keep],DD$y[keep])
 
 CC <- alpha.col(4:5, alpha=0.5)
-
 hist(x      = na.omit(log10(as.vector(SAR$sar))),
      breaks = 100, 
      main   = "frequency of SAR [0-2cm]", 
      xlab   = "SAR (/year))", 
-     axes=FALSE, xlim=c(-3,2), las=1,col=CC[1], border=CC[1])
+     axes = FALSE, xlim = c(-3, 2), las = 1, col = CC[1], border = CC[1])
 
 hist(x      = na.omit(log10(as.vector(SAR$subsar))), 
      breaks = 100,  
-     col=CC[2], border=CC[2], add=TRUE)
+     col = CC[2], border = CC[2], add = TRUE)
 
 axis(side   = 2)
 axis(side   = 1, 
@@ -679,14 +680,115 @@ axis(side   = 1,
      labels = 10^(-3:2))
 legend("topleft", 
        legend = c("gpd 0-2cm", "gpd > 2cm"), 
-       col=CC, pch=16, pt.cex=2)
-mtext(outer=TRUE, side=3,"Annual Swept Area Ratio")
+       col = CC, pch = 16, pt.cex = 2)
+mtext(outer = TRUE, side = 3,"Annual Swept Area Ratio")
 ```
 
 Note: the R-package, *Btrait* (Soetaert and Beauchard, 2022) also contains density and trait data that can be used for fishery assessment. 
 
-\newpage
+# Sensitivity and critical values
 
+## Taxon sensitivity
+
+Function *sensitivity_taxon* estimates for one taxon the density decrease for combinations of sar (swept area ratio) and gpd (gear penetration depth); also estimates (sar x gpd) values where the taxon reaches a critical level.
+
+```{r}
+Def_fun(sensitivity_taxon)
+```
+
+Function critical_sar and critical_gpd estimate the critical fishing intensity and gear penetration depth above which the taxon would become extinct (crit_DK = 0) or attain some predefined fraction of its carrying capacity (crit_DK > 0).
+
+```{r}
+Def_fun(critical_sar)
+Def_fun(critical_gpd)
+```
+
+In the figure below, first the sensitivity for the species Arctica islandica in the Dutch North sea area (the MWTL data) is estimated and plotted. 
+The sensitivity to fishing intensity (sar) and gear penetration depth (gpd) shows a rather large area where the species cannot survive (the white region). We then add all stations from the Dutch part of the North sea, characterised by the sar and gpd. This shows how the species would do in these stations. We end by estimating the critical sar for the gears (gpd) used in the Dutch Northsea, above which Artica islandica would dissappear.
+
+```{r, fig.width=8, fig.height=6}
+par(mfrow = c(1,1), las = 1)
+
+# parameters for Arctica islandica
+subset(MWTL$fishing, 
+       subset = (taxon == "Arctica islandica"))
+
+S_af <- sensitivity_taxon(r      = 0.64, 
+                          fDepth = c(0.75, 0.25),
+                          uDepth = c(0,      5))
+
+# image, white = extinct
+image2D(x = S_af$sar, y = S_af$gpd, z = S_af$DK, 
+        xlab = "sar, /yr", ylab = "gpd, cm", 
+        main = c("Species sensitivity", "Arctica islandica"),
+        col = jet2.col(100), clab = "D/K")
+lines(S_af$sar, S_af$critical_gpd, lwd = 2)
+        
+# add the stations in the MWTL data (from Btrait)
+points(MWTL$abiotics$sar, MWTL$abiotics$gpd, 
+       pch = 18, col = "black")
+legend("topright", pch = 18, legend = " MWTL stations")
+
+c_s_MWTL <- critical_sar(gpd = MWTL$abiotics$gpd, 
+                         fDepth = c(0.75, 0.25),
+                         uDepth = c(0,      5))
+summary(c_s_MWTL)
+```
+
+## area sensitivity and critical values
+
+Function *sensitivity_area* estimates for one set of sar and gpd values the density decrease for combinations of r (rate of natural increase) and d (depletion) of a taxon; also estimates critical (r x d) combinations for the area.
+
+```{r}
+Def_fun(sensitivity_area)
+```
+
+Functions critical_r and critical_d estimate the critical intrinsic rate of natural increase (r) and depletion fraction (d) beyond which a taxon, that experiences the fishing intensity and gear penetration depth of the area, would become extinct (crit_DK = 0) or attain some predefined fraction of its carrying capacity (crit_DK > 0).
+
+```{r}
+Def_fun(critical_r)
+Def_fun(critical_d)
+```
+
+We plot the sensitivity for one station in the Dutch part of the Northsea, and add the species from the MWTL area on this plot.
+
+```{r, fig.width=8, fig.height=6}
+par(mfrow = c(1,1), las = 1)
+
+# parameters for station WADDKT04
+subset(MWTL$abiotics, 
+       subset = (station== "WADDKT04"),
+       select = c(station, sar, gpd))
+
+S_W <- sensitivity_area(sar      = 11.817, 
+                        gpd      = 1.90,
+                        r.seq    = seq(0,  11, length.out = 200),
+                        d.seq    = seq(0, 0.2, length.out = 200))
+
+
+# image of station sensitivity, white = extinct (D/K = NA)
+image2D(x = S_W$r, y = S_W$d, z=S_W$DK, 
+        xlab = "r, /yr", ylab = "d, -", 
+        main = c("Area sensitivity", 
+                 "WADDKT04"),
+        col = jet2.col(100), clab = "D/K")
+lines(S_W$r, S_W$critical_d, lwd = 2)
+
+# Species characteristics relating to fishgin for species in the MWTL data 
+# (from package Btrait)
+SP_Fish    <- MWTL$fishing
+
+# depletion for all MWTL species in station WADDKT04
+SP_Fish$dW <- par_d(
+          gpd    = 1.90, 
+          fDepth = SP_Fish[, c("p0", "p0_5cm", "p5_15cm", "p15_30cm", "p30cm")],
+          uDepth =           c(  0,    0,        5,         15,         30))
+points(SP_Fish$r, SP_Fish$dW, 
+       pch = 18, col = "black")
+legend("topright", pch = 18, legend = " MWTL species")
+```
+
+\newpage
 
 # Fishing impact in a station in the North sea: FrieseFront
 

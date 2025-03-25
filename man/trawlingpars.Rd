@@ -8,7 +8,7 @@
 }
 
 \description{
- \code{par_r} calculates the rate of increase (r) of benthic taxa, based on their longevity.
+ \code{par_r} calculates the intrinsic rate of natural increase (r) of benthic taxa, based on their longevity.
 
  \code{par_d} calculates the depletion rate (d) of benthic taxa, based on their depth occurrence in the sediment.
 
@@ -50,7 +50,9 @@ par_m (sar, r, K, d, refD = K)
   }
   \item{m_max }{maximum mortality fraction in any layer, dimensionless. One number, or a vector of the same length as \code{gpd}.
   }
-  \item{fDepth }{fractional occurrence of species in sediment layers, dimensionless. A vector of the same length as \code{uDepth} (if only one taxon) or, for multiple taxa, a data.frame or matrix with number of columns = length of \code{uDepth}.
+  \item{fDepth }{fractional occurrence of species in sediment layers, dimensionless. 
+  A vector of the same length as \code{uDepth} (if only one taxon) or, for multiple taxa, 
+  a data.frame or matrix with number of columns = length of \code{uDepth}. The sum of \code{fDepth} should equal 1.
   }
   \item{uDepth }{vector with depth of the upper position of the sediment layers, units e.g. [cm]. A vector with length equal to the number of columns of \code{fDepth}.
   }
@@ -89,7 +91,7 @@ The formulae for estimating these parameters for a species i are:
  
  The parameters m_d and m_max are estimated by fitting station-wide depletion rates to depletion values in Hiddink et al. (2017). See examples.
 
- \item \code{r} is estimated as: r[i] = 5.31/longevity[i], as in Hiddink et al. (2019).
+ \item \code{r} is estimated as r[i] = 2.56/age_at_maturity[i]: or as r[i] = 5.31/longevity[i], as in Hiddink et al. (2019).
 
  \item \code{K} is estimated as: K[i] = (density[i]*r[i])/(r[i]-sar * d[i]), derived from Pitcher et al., 2017.
  }

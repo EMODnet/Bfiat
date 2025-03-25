@@ -49,9 +49,13 @@ par_d <- function(gpd   =     1 ,  # gear penetration depth, cm
     cn <-  m_d*pmax(0, gpd - uDepth)
     if (length(cn) != ncol(fDepth)) 
       stop ("'fDepth' and 'uDepth' not compatible; length of uDepth should be = ncol(fDepth")
-    AR <- sweep(fDepth, MARGIN=2, STATS=cn, FUN="*") 
+    AR <- sweep(fDepth, 
+                MARGIN = 2, 
+                STATS = cn, 
+                FUN = "*") 
   } else{
-    cn <- outer(X=gpd, Y=uDepth, FUN = function(x,y) m_d*pmax(0, x - y))
+    cn <- outer(X = gpd, Y = uDepth, 
+                FUN = function(x,y) m_d*pmax(0, x - y))
     if (ncol(cn) != ncol(fDepth)) 
       stop ("'fDepth' and 'uDepth' not compatible; length of uDepth should be = ncol(fDepth")
     AR <- fDepth*cn
@@ -74,8 +78,8 @@ par_r <- function(age_at_maturity = NULL,  # age at maturity, years
   } else if (is.null(age_at_maturity)) {
     stop ("either longevity or age_at_maturity should have a value")
   
-  } else {
-     ri <- 5.31*0.7844/age_at_maturity
+  } else {  # based on regression of r versus 1/AM
+     ri <- 2.56/age_at_maturity
   }
    ri[is.infinite(ri)] <- NA
    ri
@@ -112,11 +116,15 @@ par_K <- function(density,  # current densities
   
   isn  <- which(sar <= 0) 
   
-  if (is.null(t_density))     # steady state at time infinite, using K=1
-     Ki   <- DATA$density/steady_perturb(K = 1, 
-                                         r = DATA$r, d = DATA$d,  
-                                         sar   = DATA$sar)$density
-  
+  if (is.null(t_density))  {   # steady state at time infinite, using K=1 - SLOW VERSION
+     #Ki   <- DATA$density/steady_perturb(K = 1, 
+     #                                   r = DATA$r, d = DATA$d,  
+     #                                   sar   = DATA$sar)$density
+      #
+    STD <- 1 + DATA$sar/DATA$r * log (1 - DATA$d)
+     Ki   <- DATA$density/  STD
+     Ki[Ki < 0] <- NA
+  }  
   else if (t_density > 0) {   # Density is estimated after t_density years of fishing  
      
     ########### NEED TO CHANGE THIS  ################
@@ -160,13 +168,16 @@ par_m <- function(sar,
     DD <- data.frame(sar=sar, r=r, d=D, K = K, refD = refD)  # all have equal length
     
     # check for NA in inputs
-    wisna      <- apply(DD, MARGIN=1, FUN=function(x) any(is.na(x)))
+    wisna      <- apply(DD, 
+                        MARGIN = 1, 
+                        FUN = function(x) any(is.na(x)))
     DD[wisna,] <- 1
     
-    m <- sapply(1:nrow(DD), FUN=function(i) 
-      uniroot(f=Fcd, interval=c(0, 1000), 
-              r=DD$r[i], S=DD$sar[i], d=DD$d[i], K = DD$K[i], 
-              refD = DD$refD[i], tol=1e-8)$root)
+    m <- sapply(1:nrow(DD), 
+                FUN = function(i) 
+                uniroot(f = Fcd, interval = c(0, 1000), 
+                    r = DD$r[i], S = DD$sar[i], d = DD$d[i], K = DD$K[i], 
+                    refD = DD$refD[i], tol=1e-8)$root)
     m[d>=1]  <- NA
     m[wisna] <- NA
     m
@@ -188,15 +199,17 @@ par_m_1 <- function(sar,
   }
   
   D <- pmin(d, 1-1e-5)
-  DD <- data.frame(sar=sar, r=r, d=D)
+  DD <- data.frame(sar = sar, r = r, d = D)
   
   # check for NA in inputs
-  wisna <- apply(DD, MARGIN=1, FUN=function(x) any(is.na(x)))
+  wisna <- apply(DD, 
+                 MARGIN = 1, 
+                 FUN = function(x) any(is.na(x)))
   DD[wisna,] <- 1
   
-  m <- sapply(1:nrow(DD), FUN=function(i) 
-    uniroot(f=Fcd, interval=c(0, 1000), 
-            r=DD$r[i], S=DD$sar[i], d=DD$d[i], tol=1e-8)$root)
+  m <- sapply(1:nrow(DD), FUN = function(i) 
+         uniroot(f = Fcd, interval = c(0, 1000), 
+                 r = DD$r[i], S = DD$sar[i], d = DD$d[i], tol = 1e-8)$root)
   m[d>=1] <- NA
   m[wisna] <- NA
   m

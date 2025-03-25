@@ -257,10 +257,10 @@ run_logistic <- function(
     t0 <- t0 - tb
     B0 <- outer(X   = 1:nspec, 
                 Y   = t0, 
-                FUN = function(X,Y) Logistic2(X,Y)) # no fish mortality
+                FUN = function(X,Y) Logistic2(X, Y)) # no fish mortality
     C0 <- outer(X   = 1:nspec, 
                 Y   = tstart_perturb, 
-                FUN = function(X,Y) Logistic2(X,Y)) # no fish mortality
+                FUN = function(X,Y) Logistic2(X, Y)) # no fish mortality
     tb <- tstart_perturb
   }
   
@@ -272,7 +272,7 @@ run_logistic <- function(
   
   B  <- outer(X   = 1:nspec, 
               Y   = t1, 
-              FUN = function(X,Y)Logistic(X,Y))
+              FUN = function(X,Y) Logistic(X, Y))
   
   C0 <- outer(X   = 1:nspec, 
               Y   = tend_perturb, 
@@ -289,7 +289,7 @@ run_logistic <- function(
    t2 <- t2 - tend_perturb 
    B2  <- outer(X   = 1:nspec, 
                 Y   = t2, 
-                FUN = function(X,Y) Logistic2(X,Y))
+                FUN = function(X,Y) Logistic2(X, Y))
    if (nrow(B2) > 1)
      B <- cbind(B, B2)
    else 
@@ -381,7 +381,7 @@ run_logistic <- function(
 #    tt <- times[times >= t0 & times < t.event]  # time inbetween events
 #    if (t.event == tend)                        # run till end
 #      tt <- c(tt, tend)      
-#    BN <- outer(C0, tt-t0, FUN=Logistic)        # simulate (tt-t0=time since event)
+#    BN <- outer(C0, tt-t0, FUN = Logistic)      # simulate (tt-t0=time since event)
 #    dTrawl <- rbind(dTrawl, BN[, ncol(BN)]*d)   # depletion during trawl
 #    C0 <- BN[, ncol(BN)] * (1-d)                # new density after trawling
 #    Bt <- rbind(Bt, cbind(tt, t(BN)))           # add results 
