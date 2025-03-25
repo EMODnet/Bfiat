@@ -11,7 +11,12 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-3885-6010"))
   )        
 Maintainer: Karline Soetaert <karline.soetaert@nioz.nl>
-Depends: R (>= 4.1), deSolve, Btrait
+Depends: 
+    R (>= 4.1)
+Imports:
+    deSolve
+Remotes: 
+    EMODnet/Btrait
 Suggests: worrms, knitr, rmarkdown
 Description: Tools for estimating the impact of bottom disturbance on sediment ecosystems.
 VignetteBuilder: knitr
