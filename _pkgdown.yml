@@ -82,8 +82,10 @@ navbar:
          href: articles/Bfiat.html
     - text: "Examples of use"
       menu:
-      - text: "The dutch monitoring data"
+      - text: "The dutch monitoring data - fishing impact on density"
         href: articles/MWTL.html
+      - text: "The dutch monitoring - fishing impact on ecosystem functioning"
+        href: articles/MWTL_EF.html
   right:
     - icon: fa-file-code-o 
       text: "functions"
