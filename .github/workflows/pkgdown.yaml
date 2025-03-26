@@ -36,7 +36,7 @@ jobs:
           extra-packages: any::pkgdown, local::., any::devtools
       
       - name: Install github dependencies
-        run: devtools::install_github("https://github.com/EMODnet/Btrait")
+        run: remotes::install_github("https://github.com/EMODnet/Btrait", dependencies=T)
         shell: Rscript {0}
           
       - name: Build site
