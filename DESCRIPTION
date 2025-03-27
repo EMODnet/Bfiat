@@ -12,7 +12,7 @@ Authors@R: c(
   )        
 Maintainer: Karline Soetaert <karline.soetaert@nioz.nl>
 Depends: 
-    R (>= 4.1)
+    R (>= 4.1), plot3D
 Imports:
     deSolve
 Remotes: 
