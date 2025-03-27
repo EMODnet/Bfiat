@@ -12,9 +12,9 @@ Authors@R: c(
   )        
 Maintainer: Karline Soetaert <karline.soetaert@nioz.nl>
 Depends: 
-    R (>= 4.1)
+    R (>= 4.1), plot3D, Btrait
 Imports:
-    deSolve, plot3D, Btrait
+    deSolve
 Remotes: 
     EMODnet/Btrait
 Suggests: worrms, knitr, rmarkdown
