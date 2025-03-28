@@ -12,8 +12,10 @@ output:
     theme: flatly
   pdf_document: default
 abstract: "The impact of bottom trawling on sediment ecosystem functions in the Dutch part of the Northsea is estimated. We use monitoring data from 103 stations in the area (MWTL data set), and impose fishing intensities estimated for each of these stations. We then use the output of the fishing model to estimate the effect of fishing on the bioturbation and bioirrigation in these stations."
-vignette: "%\\VignetteEncoding{UTF-8} %\\VignetteIndexEntry{Bfiat: Modelling trawling
-  effects on ecosystem functioning - model parameterisation} %\\VignetteEngine{knitr::rmarkdown}\n"
+vignette: >
+  %\VignetteEncoding{UTF-8} 
+  %\VignetteIndexEntry{Bfiat: Modelling trawling effects on ecosystem functioning - model parameterisation}  
+  %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   markdown:
     wrap: sentence
@@ -21,7 +23,6 @@ editor_options:
 
 ```{r setup, include=FALSE}
 library(Bfiat)
-library(shape)
 palette("ggplot2")                                      # ggplot2-style palette
 Colramp <- ramp.col(c("lightgreen", "darkblue"), n=100) # colors for image
 ```

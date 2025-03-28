@@ -10,7 +10,10 @@ output:
     code_folding: show
     theme: cosmo
 abstract: "The impact of bottom trawling on benthic life in the Dutch part of the Northsea is estimated. We use monitoring data from 103 stations in the area (MWTL data set), and impose fishing intensities estimated for each of these stations."
-vignette: "%\\VignetteEncoding{UTF-8} %\\VignetteIndexEntry{Bfiat: The Bfiat package: modelling trawling effects in the Dutch part of the Northsea} %\\VignetteEngine{knitr::rmarkdown}\n"
+vignette: >
+ %\VignetteEncoding{UTF-8} 
+ %\VignetteIndexEntry{Bfiat: The Bfiat package: modelling trawling effects in the Dutch part of the Northsea} 
+ %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   markdown:
     wrap: sentence
@@ -20,7 +23,6 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, knitr.table.format = 'rst')
 library(Btrait)
 library(Bfiat)
-library(shape)
 palette("ggplot2")                                      # ggplot2-style palette
 Colramp <- ramp.col(c("lightgreen", "darkblue"), n=100) # colors for image
 ```

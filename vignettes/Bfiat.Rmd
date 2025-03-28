@@ -11,9 +11,9 @@ output:
     theme: cosmo
 abstract: "Bfiat is an R-package to estimate the impact of bottom trawling on organism density at the taxon level, and on ecosystem functioning. In this vignette we demonstrate the use of the package using simple examples."
 vignette: >
-  %\VignetteEncoding{UTF-8}
-  %\VignetteIndexEntry{Bfiat: Modelling trawling effects on ecosystem functioning}
-  %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Bfiat: Modelling trawling effects on ecosystem functioning}
+    %\VignetteEngine{knitr::rmarkdown}
 editor_options:
   markdown:
     wrap: sentence
