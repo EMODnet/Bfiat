@@ -1,15 +1,4 @@
 url: https://EMODnet.github.io/Bfiat/
-
-home:
-  title: An R package for bottom fishing assessment
-  description: >
-     Bfiat, the Bottom Fisheries Impact Assessment Tool, is an R-package that 
-     estimates the impact of bottom trawling on sediment inhabiting organisms, 
-     and on sediment ecosystem functions. 
-     It contains data-driven mechanistic models that describe how species 
-     density is being reduced by bottom trawling, and then recovers till 
-     the next fishing event. 
-
 template:
   bootstrap: 5
   params:
