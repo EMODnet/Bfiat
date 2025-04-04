@@ -12,7 +12,7 @@ description: >
      the next fishing event. 
 ---
 
-# <img src="man/figures/Logo_hex.png" align="center"/>
+# <img src="man/figures/Logo_hex.png" align="center" alt="Bfiat"/>
 
 <center>
 
@@ -42,6 +42,8 @@ description: >
  density is being reduced by bottom trawling, and then recovers till 
  the next fishing event. 
 ```
+
+[click here to go to the website](https://EMODnet.github.io/Bfiat/)
 
 <br>
 
