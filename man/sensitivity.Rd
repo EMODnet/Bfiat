@@ -7,7 +7,7 @@
 
 \description{
   \code{sensitivity_taxon} estimates for one taxon the density decrease for combinations of sar and gpd; 
-  also estimates critical (sar x gpd) values for the taxon.
+  also estimates critical (sar x gpd) values for the taxon. 
 
   \code{sensitivity_area} estimates for one set of sar and gpd values the density decrease for combinations of r (rate of natural increase) and d (depletion); 
   also estimates critical (r x d) combinations for the area.
