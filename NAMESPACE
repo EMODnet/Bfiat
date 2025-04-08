@@ -1,6 +1,6 @@
 useDynLib(Bfiat)
 
-import(deSolve, Btrait)
+import(deSolve, Btrait, plot3D)
 importFrom("stats", "na.omit", "uniroot")
 importFrom("graphics", "par")
 importFrom("stats", "reshape")

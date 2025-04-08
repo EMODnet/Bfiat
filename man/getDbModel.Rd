@@ -81,7 +81,7 @@ IPc_i = (Wi)^(0.75) * density_i * BTi*FTi*IDi
 
 \link{get_trait_model} for deriving functional traits from a perturbation or logistic model.
 
-\link[Btrait]{Traits_Db}, for trait databases in packge Btrait..
+\link[Btrait]{Traits_Db}, for trait databases in package Btrait.
 
 \link[Btrait]{get_trait_density}, for the function on which \code{get_trait_model} is based.
 

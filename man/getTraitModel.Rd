@@ -58,7 +58,7 @@ This can be solved either (1) by making the names in the trait database consiste
 
 \link{get_Db_model} for deriving bioturbation and irrigation indices from a perturbation or logistic model.
 
-\link[Btrait]{Traits_nioz}, for trait databases in packge Btrait..
+\link[Btrait]{Traits_nioz}, for trait databases in package Btrait.
 
 \link[Btrait]{get_trait_density}, for the function on which \code{get_trait_model} is based.
 

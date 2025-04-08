@@ -329,7 +329,7 @@ legend("top", col=1:4, lty=1, lwd=2,
 \seealso{
 \link{get_trait_model} for how to combine the output of a disturbance model with traits.
 
-\link[Btrait]{Traits_nioz}, for trait databases in package Btrait..
+\link[Btrait]{Traits_nioz}, for trait databases in package Btrait.
 
 \link[Btrait]{get_trait_density}, for the function on which \code{get_trait_model} is based.
 
