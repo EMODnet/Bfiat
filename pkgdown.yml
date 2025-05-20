@@ -1,11 +1,11 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   Bfiat: Bfiat.html
   MWTL_EF: MWTL_EF.html
   MWTL: MWTL.html
-last_built: 2025-04-08T11:16Z
+last_built: 2025-05-20T15:52Z
 urls:
   reference: https://EMODnet.github.io/Bfiat/reference
   article: https://EMODnet.github.io/Bfiat/articles
