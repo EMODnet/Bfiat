@@ -15,7 +15,7 @@ get_trait_model <- function(model,
   wide <- model
   colnames(wide)[-1] <- taxon_names 
   traitModel <- get_trait_density(
-            wide        = model, 
+            wide        = wide, 
             trait       = trait, 
             trait_class = trait_class, 
             trait_score = trait_score, 
