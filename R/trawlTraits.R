@@ -40,9 +40,10 @@ get_Db_model <- function(model,
                        taxon_names = colnames(model)[-1],
                        taxonomy = NULL,  
                        weight, # two-column data.frame (taxon, weight) or vector
-                       
-                       verbose = FALSE, na.rm=FALSE)  
-getIndexModel(model=model, trait=trait, taxonomy=taxonomy, 
+                       verbose = FALSE, 
+                       na.rm   = FALSE)  
+
+  getIndexModel(model=model, trait=trait, taxonomy=taxonomy, 
               weight=weight, taxon_names=taxon_names, 
               verbose=verbose, na.rm=na.rm, type="BPc")
 
@@ -53,10 +54,31 @@ get_irr_model <- function(model,
                        taxon_names = colnames(model)[-1],
                        taxonomy = NULL,  
                        weight, # two-column data.frame (taxon, weight) or vector
-                       verbose = FALSE, na.rm=FALSE)  
+                       verbose = FALSE, 
+                       na.rm   = FALSE)  
 getIndexModel(model=model, trait=trait, taxonomy=taxonomy, 
               weight=weight, taxon_names=taxon_names, 
               verbose=verbose, na.rm=na.rm, type="IPc")
+
+## ====================================================================
+
+# species-specific contribution to a trait - uses sums
+
+get_sptrait_model <- function(model,         
+                         trait,
+                         taxon_names = colnames(model)[-1],
+                         taxonomy = NULL,  
+                         verbose  = FALSE, 
+                         na.rm    = FALSE,
+                         name     = "trait") { 
+
+  if (ncol(trait) != 2) 
+    stop("'trait' should be a two-columned data.frame, with (species, value)") 
+  
+  getIndexModel(model=model, trait=trait, taxonomy=taxonomy, 
+                taxon_names=taxon_names, 
+                verbose=verbose, na.rm = na.rm, type = name)
+}
 
 ## ====================================================================
 
@@ -81,20 +103,25 @@ getIndexModel <- function(model,
     stop ("the length of taxon_names should be = ncol(model) - 1")
   
 # Get the traits for the taxa - use taxonomic closeness to extend traits
+  traitnames <- NULL
   if (type == "BPc") 
     traitnames <- c(taxcname, "Ri", "Mi")
   else if (type == "IPc")
     traitnames <- c(taxcname, "BT", "FT", "ID")
   
-  S <- try(Trait <- trait[,traitnames], silent = TRUE)
-  if (inherits(S, "try-error"))
-    stop ("Trait does not have all columns, should contain", paste(traitnames, collapse = ", "))
+  if (! is.null(traitnames)){
+     S <- try(Trait <- trait[,traitnames], silent = TRUE)
+     if (inherits(S, "try-error"))
+      stop ("Trait does not have all columns, should contain", 
+            paste(traitnames, collapse = ", "))
+  } else Trait <- trait
   
   Data_Db  <- get_trait(
         taxon    = taxa, 
         trait    = Trait, 
         taxonomy = taxonomy,
         verbose  = verbose)
+  
   # one taxon can be present several times...
   if (nrow(Data_Db) != length(taxa)){  # taxa may have been present multiple times
     row.names(Data_Db) <- Data_Db[,1]
@@ -106,33 +133,44 @@ getIndexModel <- function(model,
   
   Data_Db <- cbind(Data_Db, 1:nrow(Data_Db))  # add order
   nc      <- ncol(Data_Db)
-  
+
   # weight data: either a vector, or a two-columned matrix
-  if (is.vector(weight)){
-    Data_Db$Weight <- weight
-  } else if (ncol(weight) != 2){
-    stop ("weight should either be a vector or a matrix or dataframe with taxon in 1st column and weight in 2nd column") 
-  } else {colnames(weight)[2] <- "Weight"
-  
-    Data_Db <- merge(Data_Db, weight, 
-                     by = 1, all.x = TRUE)
-    Data_Db <- Data_Db[order(Data_Db[ ,nc]), ]   # restore order
-  }  
-  
   Noweight <- NULL
   
-  if (any(is.na(Data_Db$Weight))){
-    if (verbose) 
-      warning("Weight not known for ", length(which(is.na(Data_Db$Weight)))," taxa - set to 0")
-    Data_Db$Weight[is.na(Data_Db$Weight)] <- 0
-    Noweight <- Data_Db$taxon[is.na(Data_Db$Weight)]
-   }
-
+  if (! missing(weight)){
+    if (is.vector(weight)){
+      Data_Db$Weight <- weight
+    
+    } else if (ncol(weight) != 2){
+      stop ("weight should either be a vector or a matrix or dataframe with taxon in 1st column and weight in 2nd column") 
+  
+    } else {colnames(weight)[2] <- "Weight"
+  
+      Data_Db <- merge(Data_Db, weight, 
+                       by = 1, all.x = TRUE)
+      Data_Db <- Data_Db[order(Data_Db[ ,nc]), ]   # restore order
+    }  
+  
+    if (any(is.na(Data_Db$Weight))){
+      if (verbose) 
+        warning("Weight not known for ", length(which(is.na(Data_Db$Weight)))," taxa - set to 0")
+      Data_Db$Weight[is.na(Data_Db$Weight)] <- 0
+      Noweight <- Data_Db$taxon[is.na(Data_Db$Weight)]
+     }
+  }
+  
 # Part in formula that remains constant 
   if (type == "BPc") 
     Data_FAC <- with(Data_Db, sqrt(Weight)*Mi*Ri)  
+  
   else if (type == "IPc")
     Data_FAC <- with(Data_Db, Weight^(0.75)*BT*FT*ID)  
+
+  else if (nc > 3)
+    Data_FAC <- rowSums(Data_Db[,2:(nc-1)])  
+  
+  else
+    Data_FAC <- Data_Db[,2]  
   
 # multiply all rows in model with the constant factor
   model_BPC <- sweep(model[,-1], 

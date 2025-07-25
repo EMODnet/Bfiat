@@ -42,7 +42,7 @@ steady_logistic (K = 1, r = 1, m = 0.1,
   }
   \item{D0 }{initial density. One number, or a vector of length = nrow(parms).
   }
-  \item{tol }{tolerance between which the steady-state solution needs to be estimated. Steady-state is assumed to be reached, if the successive values at 1/sar, Di and Di+1 differ less than atol + tol*Di+1, where atol is taken as 1e-10 (cannot be changed)
+  \item{tol }{tolerance between which the steady-state solution needs to be estimated. For \code{steady_perturb} and \code{steady_metier}, steady-state is assumed to be reached, if the successive values at 1/sar, Di and Di+1 differ less than atol + tol*Di+1, where atol is taken as 1e-10 (cannot be changed). For \code{steady_logistic}, the steady-state can be estimated analytically, and \code{tol} is only used to estimate the time it takes to bring the solution to within tol from the steady-state, i.e. for D0 < S, the time it takes to reach to S*(1-tol), for D0 > S, the time it takes to reach S*(1+tol).
   }
 }
 
@@ -60,6 +60,7 @@ steady_logistic (K = 1, r = 1, m = 0.1,
  \itemize{
   \item \code{k, r, m, D0}, the input parameters,
   \item \code{density}, the estimated densities at steady-state,
+  \item \code{density_within_tol}, the steady-state densities within tolerances,
   \item \code{time}, the time when steady-state was reached (within tol).
 }
 
@@ -73,7 +74,6 @@ steady_logistic (K = 1, r = 1, m = 0.1,
 \keyword{manip}
 
 \examples{
-
 
 ## ====================================================
 ## Several inputs logistic model
@@ -171,6 +171,57 @@ std <- steady_perturb(r   = 0.5,
                       K   = 1, 
                       sar = sar)
 abline(h = std$density, lty = 2, col = "green")
+
+## ====================================================
+## time it takes to reach (quasi-steady state)
+## ====================================================
+
+# start from initial density = K; 
+
+# 1. impose fishing for 30 years, then stop fishing
+
+p_perturb <- list(K = 10, 
+                  r = 1, 
+                  d = 0.3)
+
+# dynamic run
+out <- run_perturb(parms = p_perturb,
+                   sar   = 1,
+                   times = seq(0, 50, length.out = 1000),
+                   tend_perturb = 30)
+
+# steady-state under fishing (tol = 1e-6)
+
+(std_fish <- steady_perturb(parms = p_perturb))
+
+
+# steady-state when fishing stops 
+
+p_unperturb <- list(K = 10, 
+                    r = 1, 
+                    m = 0)   # mortality = 0 (no fishing)
+
+# Initial condition = steady-state solution under fishing
+
+tol <- 0.01  # will estimate the time it takes to recover for 90%
+
+(std_nofish <- steady_logistic(parms = p_unperturb,
+                               D0    = std_fish$density,  # fishing steady-state
+                               tol   = tol))
+
+# plot dynamic run
+plot(out)
+
+# add 90 percent density value
+with(std_nofish, 
+   abline(h = density_within_tol,
+          col = "orange", lty = 2))
+          
+# add time to reach the 90 percent density value
+with(std_nofish, 
+   abline(v = time + 30,
+          col = "orange", lty = 2))          
+
 
 }
 

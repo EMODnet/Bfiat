@@ -22,6 +22,8 @@ steady_metier  <- function (K = 1, r = 1,
   sp
 }
 
+## ====================================================================
+
 steady_perturb <- function(K     = 1, r = 1, d = 0.1,  
                           parms = data.frame(K = K, r = r, d = d),
                           sar   = 1, D0 = parms[["K"]], 
@@ -110,18 +112,23 @@ steady_logistic <- function(K     = 1, r = 1, m = 0.1,
   with(parms, {
     
     Ds <- K*(1-m/r)
-    
-    DD <- pmin(K, Ds + tol)
-    DD <- pmax(DD, tol)
     Ds[Ds < 0] <- 0
-    DD <- (K*(r-m)*D0 - DD*r*D0)/(DD*((r-m)*K-r*D0))
+    
+    DS <- Ds* (1+sign(D0-Ds)*tol)
+#    DS <- pmax(DS, tol)
+    
+    DD <- (K*(r-m)*D0 - DS*r*D0)/(DS*((r-m)*K-r*D0))
     ts <- -log(DD)/(r-m)
-    ts[Ds == K] <- 0
+    ii <- which(Ds == K & D0 == K)  # this when m = 0
+    if (length(ii))
+      ts[ii] <- 0
+    
     ts[ts < 0] <- NA
     ts[is.infinite(ts)] <- NA
     
     return(data.frame(parms, 
                       density = pmax(0, Ds), 
+                      density_within_tol = pmax(0, DS),
                       time    = ts))
   })
 }

@@ -1,12 +1,15 @@
 \name{Bioturbation and bioirrigation indices from Model output}
 \alias{get_Db_model}
 \alias{get_irr_model}
+\alias{get_sptrait_model}
 \title{
-  From model output (time x taxon density) to time x bioturbation or time x bioirrigation potentials.
+  From model output (time x taxon density) to time x species_bioturbation or time x species_bioirrigation potentials.
+  
+  get_sptrait_model extracts the contribution of a species to an arbitrary trait
 }
 
 \description{
- \code{get_Db_model} and \code{get_irr_model} combine output of a biological model that describes how taxa evolve with time with a trait database to obtain how bioturbation and bioirrigation potentials evolve over time.  They estimate the bioturbation potential index (BPc) sensu Querios et al., 2013 and Solan et al., 2004, and the bioirrigation potential index (IPc) sensu Wrede et al., 2018, respectively.
+ \code{get_Db_model} and \code{get_irr_model} combine output of a biological model that describes how taxa evolve with time with a trait database to obtain how bioturbation and bioirrigation potentials evolve over time.  They estimate the bioturbation potential index (BPc) sensu Querios et al., 2013 and Solan et al., 2004, and the bioirrigation potential index (IPc) sensu Wrede et al., 2018, respectively. 
 }
 
 \usage{
@@ -17,14 +20,20 @@ get_Db_model(model, trait = Btrait::Traits_Db,
 get_irr_model(model, trait = Btrait::Traits_irr, 
               taxon_names = colnames(model)[-1], taxonomy = NULL,  
               weight, verbose = FALSE, na.rm = FALSE)  
+
+get_sptrait_model(model, trait, 
+              taxon_names = colnames(model)[-1], taxonomy = NULL,  
+              verbose = FALSE, na.rm = FALSE, name     = "trait")  
 }
 
 \arguments{
-  \item{model}{ dynamic model output that describes how taxa change over time. This is a matrix with (time x taxon) information, such as generated from the function \link{run_perturb} or \code{density+perturb}. The first column should contain the time, and the other columns the taxon density trajectories over time, with the column names the taxon names, if not in \code{taxon.name}. (see note for the taxon names)
+  \item{model}{ dynamic model output that describes how taxa change over time. This is a matrix with (time x taxon) information, such as generated from the function \link{run_perturb} or \code{density_perturb}. The first column should contain the time, and the other columns the taxon density trajectories over time, with the column names the taxon names, if not in \code{taxon.name}. (see note for the taxon names)
   }
   \item{taxon_names}{ names of the taxa, one for each column in \code{model}, except the first column. A vector of length = ncol(model) - 1. These names will be matched with the trait database, and optionally with \code{weight} if this is a two-columned matrix/data.frame.
   }
-  \item{trait}{ (taxon x trait) data. For \code{get_Db_model}, \code{traits} should contain the columns \code{Ri} and \code{Mi} (with the reworking and mobility traits). For use in \code{get_irr_model}, \code{traits} should contain columns \code{BT} and \code{FT}, and \code{ID}, the burrowing type, feeding type, and injection depth respectively. The trait matrix should have the names of the taxa in its first column. A good choice of a trait database for estimating bioturbation potentials is \link[Btrait]{Traits_Db}; a good choice for estimating bioirrigation potentials is \link[Btrait]{Traits_irr}.
+  \item{trait}{ (taxon x trait) data. For \code{get_Db_model}, \code{traits} should contain the columns \code{Ri} and \code{Mi} (with the reworking and mobility traits). For use in \code{get_irr_model}, \code{traits} should contain columns \code{BT} and \code{FT}, and \code{ID}, the burrowing type, feeding type, and injection depth respectively. 
+  For \code{get_sptrait_model}, the trait matrix should contain only two columns, the \code{taxon} and the value of the trait.
+  The trait matrix should have the names of the taxa in its first column. A good choice of a trait database for estimating bioturbation potentials is \link[Btrait]{Traits_Db}; a good choice for estimating bioirrigation potentials is \link[Btrait]{Traits_irr}.
   }
   \item{verbose }{when TRUE, will write warnings to the screen.
   }
@@ -34,14 +43,18 @@ get_irr_model(model, trait = Btrait::Traits_irr,
   }
   \item{weight }{either a vector with a value for each trajectory in model (and with length = ncol(model) - 1), or a \code{data.frame} with taxon (first column) versus weight (2nd column) characteristics for each taxon in the \code{model}.
   }
+  \item{name }{the base name of the output columns.
+  }
 }
 
 \value{
 \code{get_Db_model} returns the time x Db-index matrix of class \code{deSolve}. Both the bioturbation index for each taxon ("BPC_taxon.."), and the summed index is returned ("BPc").
 
-\code{get_irr_model} returns the time x Irr-index density matrix of class \code{deSolve}. Both the irrigation index for each taxon ("IPC_taxon.."), and the summed index is returned ("IPc").
+\code{get_irr_model} returns the time x Irr-index matrix of class \code{deSolve}. Both the irrigation index for each taxon ("IPC_taxon.."), and the summed index is returned ("IPc").
 
-The result has in its attributes a vector called "Factor", which is the constant factor with which the model output has been multiplied; for \code{get_Db_model}, this is estimated as sqrt(weight)*Mi*Ri; for \code{get_irr_model}, this is estimated as (weight)^0.75*FT*BT*ID.
+\code{get_sptrait_model} returns the time x trait matrix of class \code{deSolve}. Both the trait for each taxon ("trait_taxon.."), and the summed trait is returned (trait), where the name is set in argument \code{trait}.
+
+The result has in its attributes a vector called "Factor", which is the constant factor with which the model output has been multiplied; for \code{get_Db_model}, this is estimated as sqrt(weight)*Mi*Ri; for \code{get_irr_model}, this is estimated as (weight)^0.75*FT*BT*ID; for \code{get_sptrait_model}, this is the trait value itself.
 }
 
 \author{
@@ -151,9 +164,19 @@ IrrTraits <- data.frame(
   ID      = c(1     , 2    ,   1  ,   3  ,     2)
 )
 
+##-----------------------------------------------------
+## Other traits
+##-----------------------------------------------------
+
+# fraction to which the species is a suspension feeder
+SuspTraits <- data.frame(
+  taxon   = c("sp.1","sp.2","sp.3","sp.5","sp.6"),
+  susp    = c(1     , 0    , 0.5  , 0.1  ,     1)
+)
+
 # Weight of the species - it is assumed this does not change over time
-Weight <- data.frame(taxon=c("sp.1","sp.2","sp.3","sp.4","sp.5","sp.6"),
-                     weight =c(0.1,   0.2,     3,  0.04,   0.5,     6))
+Weight <- data.frame(taxon  = c("sp.1","sp.2","sp.3","sp.4","sp.5","sp.6"),
+                     weight = c(0.1  ,   0.2,     3,  0.04,   0.5,     6))
                      
 DbRun  <- get_Db_model (model       = trawl1run,  
                         trait       = DbTraits, 
@@ -179,6 +202,23 @@ IrrRun1 <- get_irr_model (model       = trawl1run,
                           taxonomy    = Btaxonomy)
 
 plot(IrrRun1)
+
+# The total biomass of each species over time
+BioRun1 <- get_sptrait_model (model       = trawl1run,  
+                              trait       = Weight,
+                              taxonomy    = Btaxonomy,
+                              name        = "Weight")
+
+plot(BioRun1)
+
+# The suspension feeding
+SFRun1 <- get_sptrait_model (model       = trawl1run,  
+                             trait       = SuspTraits,
+                             taxonomy    = Btaxonomy,
+                             name        = "SF")
+
+plot(SFRun1)
+
 
 }
 \references{
