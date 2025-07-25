@@ -202,7 +202,8 @@ contains:</p>
 <li>Functions to estimate bottom trawling impacts on ecosystem
 functions.</li>
 </ul>
-<pre><code><span><span class="co">## [1] "get_Db_model"    "get_irr_model"   "get_trait_model"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "get_Db_model"      "get_irr_model"     "get_sptrait_model"</span></span>
+<span><span class="co">## [4] "get_trait_model"</span></span></code></pre>
 <ul>
 <li>Functions to calculate fishing parameters.</li>
 </ul>
@@ -1518,6 +1519,9 @@ PulseWing trawl. ICES J. Mar. Sci. 76, 312–329.</p>
 <span><span class="fu"><a href="../reference/getDbModel.html">get_irr_model</a></span> <span class="op">(</span><span class="va">model</span>, trait <span class="op">=</span> <span class="fu">Btrait</span><span class="fu">::</span><span class="va"><a href="https://EMODnet.github.io/Btrait/reference/Btraitdata.html" class="external-link">Traits_irr</a></span>, taxon_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>,  </span>
 <span> taxonomy <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">weight</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </span>
 <span> </span>
+<span><span class="fu"><a href="../reference/getDbModel.html">get_sptrait_model</a></span> <span class="op">(</span><span class="va">model</span>, <span class="va">trait</span>, taxon_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, taxonomy <span class="op">=</span> <span class="cn">NULL</span>,  </span>
+<span> verbose <span class="op">=</span> <span class="cn">FALSE</span>, na.rm <span class="op">=</span> <span class="cn">FALSE</span>, name <span class="op">=</span> <span class="st">"trait"</span><span class="op">)</span>  </span>
+<span> </span>
 <span><span class="fu"><a href="../reference/getTraitModel.html">get_trait_model</a></span> <span class="op">(</span><span class="va">model</span>, <span class="va">trait</span>, trait_class <span class="op">=</span> <span class="cn">NULL</span>, trait_score <span class="op">=</span> <span class="cn">NULL</span>,  </span>
 <span> taxon_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, taxonomy <span class="op">=</span> <span class="cn">NULL</span>, taxon_column <span class="op">=</span> <span class="fl">1</span>,  </span>
 <span> scalewithvalue <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  </span>
@@ -1647,7 +1651,7 @@ based on taxonomic closeness.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

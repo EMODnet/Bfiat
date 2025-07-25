@@ -85,7 +85,7 @@
 <dd><p>initial density. One number, or a vector of length = nrow(parms).</p></dd>
 
   <dt id="arg-tol-">tol <a class="anchor" aria-label="anchor" href="#arg-tol-"></a></dt>
-<dd><p>tolerance between which the steady-state solution needs to be estimated. Steady-state is assumed to be reached, if the successive values at 1/sar, Di and Di+1 differ less than atol + tol*Di+1, where atol is taken as 1e-10 (cannot be changed)</p></dd>
+<dd><p>tolerance between which the steady-state solution needs to be estimated. For <code>steady_perturb</code> and <code>steady_metier</code>, steady-state is assumed to be reached, if the successive values at 1/sar, Di and Di+1 differ less than atol + tol*Di+1, where atol is taken as 1e-10 (cannot be changed). For <code>steady_logistic</code>, the steady-state can be estimated analytically, and <code>tol</code> is only used to estimate the time it takes to bring the solution to within tol from the steady-state, i.e. for D0 &lt; S, the time it takes to reach to S*(1-tol), for D0 &gt; S, the time it takes to reach S*(1+tol).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -97,6 +97,7 @@
 <li><p><code>time</code>, the time when steady-state was reached (within tol).</p></li>
 </ul><p>for <code>steady_logistic</code>: returns a data.frame with</p><ul><li><p><code>k, r, m, D0</code>, the input parameters,</p></li>
 <li><p><code>density</code>, the estimated densities at steady-state,</p></li>
+<li><p><code>density_within_tol</code>, the steady-state densities within tolerances,</p></li>
 <li><p><code>time</code>, the time when steady-state was reached (within tol).</p></li>
 </ul></div>
     <div class="section level2">
@@ -121,7 +122,6 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## ====================================================</span></span></span>
 <span class="r-in"><span><span class="co">## Several inputs logistic model</span></span></span>
 <span class="r-in"><span><span class="co">## ====================================================</span></span></span>
@@ -222,6 +222,62 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">std</span><span class="op">$</span><span class="va">density</span>, lty <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="st">"green"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="steadydensity-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## ====================================================</span></span></span>
+<span class="r-in"><span><span class="co">## time it takes to reach (quasi-steady state)</span></span></span>
+<span class="r-in"><span><span class="co">## ====================================================</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># start from initial density = K; </span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># 1. impose fishing for 30 years, then stop fishing</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">p_perturb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>K <span class="op">=</span> <span class="fl">10</span>, </span></span>
+<span class="r-in"><span>                  r <span class="op">=</span> <span class="fl">1</span>, </span></span>
+<span class="r-in"><span>                  d <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># dynamic run</span></span></span>
+<span class="r-in"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="trawlingfun.html">run_perturb</a></span><span class="op">(</span>parms <span class="op">=</span> <span class="va">p_perturb</span>,</span></span>
+<span class="r-in"><span>                   sar   <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   tend_perturb <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># steady-state under fishing (tol = 1e-6)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">std_fish</span> <span class="op">&lt;-</span> <span class="fu">steady_perturb</span><span class="op">(</span>parms <span class="op">=</span> <span class="va">p_perturb</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    K r   d sar D0 density_before density_after  density ntrawl time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 10 1 0.3   1 10       7.505804      5.254063 6.433244     17   17</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># steady-state when fishing stops </span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">p_unperturb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>K <span class="op">=</span> <span class="fl">10</span>, </span></span>
+<span class="r-in"><span>                    r <span class="op">=</span> <span class="fl">1</span>, </span></span>
+<span class="r-in"><span>                    m <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>   <span class="co"># mortality = 0 (no fishing)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Initial condition = steady-state solution under fishing</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">tol</span> <span class="op">&lt;-</span> <span class="fl">0.01</span>  <span class="co"># will estimate the time it takes to recover for 90%</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">std_nofish</span> <span class="op">&lt;-</span> <span class="fu">steady_logistic</span><span class="op">(</span>parms <span class="op">=</span> <span class="va">p_unperturb</span>,</span></span>
+<span class="r-in"><span>                               D0    <span class="op">=</span> <span class="va">std_fish</span><span class="op">$</span><span class="va">density</span>,  <span class="co"># fishing steady-state</span></span></span>
+<span class="r-in"><span>                               tol   <span class="op">=</span> <span class="va">tol</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    K r m       D0 density density_within_tol     time</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 10 1 0 6.433244      10                9.9 4.005297</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot dynamic run</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># add 90 percent density value</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">std_nofish</span>, </span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">density_within_tol</span>,</span></span>
+<span class="r-in"><span>          col <span class="op">=</span> <span class="st">"orange"</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>          </span></span>
+<span class="r-in"><span><span class="co"># add time to reach the 90 percent density value</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">std_nofish</span>, </span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">time</span> <span class="op">+</span> <span class="fl">30</span>,</span></span>
+<span class="r-in"><span>          col <span class="op">=</span> <span class="st">"orange"</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span>          </span></span>
+<span class="r-plt img"><img src="steadydensity-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -233,7 +289,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
