@@ -133,7 +133,7 @@ fishing.</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>t</mi><mi>j</mi><mo>+</mo></msubsup><annotation encoding="application/x-tex">t_j^+</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>t</mi><mrow><mi>j</mi><mo>+</mo><mn>1</mn></mrow><mo>−</mo></msubsup><annotation encoding="application/x-tex">t_{j+1}^-</annotation></semantics></math>:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msubsup><mi>D</mi><mi>i</mi><mi>t</mi></msubsup></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msubsup><mi>D</mi><mi>i</mi><mi>t</mi></msubsup><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msubsup><mi>D</mi><mi>i</mi><mi>t</mi></msubsup><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">\frac{dD_i^t}{dt}=r_i \cdot D_i^t \cdot (1-\frac{D_i^t}{K_i}),</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msubsup><mi>D</mi><mi>i</mi><mi>t</mi></msubsup></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msubsup><mi>D</mi><mi>i</mi><mi>t</mi></msubsup><mo>⋅</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msubsup><mi>D</mi><mi>i</mi><mi>t</mi></msubsup><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">\frac{dD_i^t}{dt}=r_i \cdot D_i^t \cdot (1-\frac{D_i^t}{K_i}),</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
 is time,
@@ -153,7 +153,7 @@ is the logistic growth parameter (units [/time]).</p>
 <p>During trawling at times
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>t</mi><mi>j</mi></msub><annotation encoding="application/x-tex">t_j</annotation></semantics></math>,
 density changes instantaneously:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>+</mo></msubsup></msubsup><mo>=</mo><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>−</mo></msubsup></msubsup><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">D_i^{t_j^+} = D_i^{t_j^-} \cdot (1-d_i),</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>+</mo></msubsup></msubsup><mo>=</mo><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>−</mo></msubsup></msubsup><mo>⋅</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">D_i^{t_j^+} = D_i^{t_j^-} \cdot (1-d_i),</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>+</mo></msubsup></msubsup><annotation encoding="application/x-tex">D_i^{t_j^+}</annotation></semantics></math>
 and
@@ -171,15 +171,15 @@ is the species-specific and trawl-specific depletion fraction.</p>
 intensity, expressed as the annual swept area ratio (SAR).</p>
 <p>SAR is the cumulative area contacted by a fishing gear over one year
 and per surface area. It has units of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>m</mi><mn>2</mn></msup><mspace width="0.222em"></mspace><msup><mi>m</mi><mrow><mo>−</mo><mn>2</mn></mrow></msup><mspace width="0.222em"></mspace><mi>y</mi><msup><mi>r</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">m^2~m^{-2}~yr^{-1}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>m</mi><mn>2</mn></msup><mspace width="0.222em"></mspace><msup><mi>m</mi><mrow><mi>−</mi><mn>2</mn></mrow></msup><mspace width="0.222em"></mspace><mi>y</mi><msup><mi>r</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">m^2~m^{-2}~yr^{-1}</annotation></semantics></math>,
 or
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><msup><mi>r</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">yr^{-1}</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><msup><mi>r</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">yr^{-1}</annotation></semantics></math>.</p>
 <p>From the swept area ratio (hereafter denoted as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>),
 we calculate the average time in between fishing events
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">yr</annotation></semantics></math>)
 as:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi><mo>=</mo><msub><mi>t</mi><mrow><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>−</mo><msub><mi>t</mi><mi>j</mi></msub><mo>=</mo><mfrac><mn>1</mn><mi>S</mi></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\Delta t = t_{j+1} - t_j = \frac{1}{S}.</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>=</mo><msub><mi>t</mi><mrow><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>−</mo><msub><mi>t</mi><mi>j</mi></msub><mo>=</mo><mfrac><mn>1</mn><mi>S</mi></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">\Delta t = t_{j+1} - t_j = \frac{1}{S}.</annotation></semantics></math></p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -232,7 +232,7 @@ surface area.</p>
 <p>From the swept area ratio (hereafter denoted as
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>,
 units
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><msup><mi>r</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">yr^{-1}</annotation></semantics></math>),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><msup><mi>r</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">yr^{-1}</annotation></semantics></math>),
 we calculate the time in between fishing events
 (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mi>r</mi></mrow><annotation encoding="application/x-tex">yr</annotation></semantics></math>)
 as
@@ -426,7 +426,7 @@ al. (2023). This database records 32 different traits from 281 taxa.</p>
 and the swept area ratios (sar) that were derived from OSPAR (ICES
 2018).</p>
 <div class="figure">
-<img src="MWTL_files/figure-html/unnamed-chunk-6-1.png" alt="FIG: MWTL sampling stations with indication of the main areas, fishing intensity and gear penetration depth. '+' denote the two stations that will be showcased." width="960"><p class="caption">
+<img src="MWTL_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="FIG: MWTL sampling stations with indication of the main areas, fishing intensity and gear penetration depth. '+' denote the two stations that will be showcased." width="960"><p class="caption">
 FIG: MWTL sampling stations with indication of the main areas, fishing
 intensity and gear penetration depth. ‘+’ denote the two stations that
 will be showcased.
@@ -941,7 +941,7 @@ fishing stopped).</p>
 <span>                         tend_perturb <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##    user  system elapsed </span></span>
-<span><span class="co">##   0.552   0.067   0.619</span></span></code></pre>
+<span><span class="co">##   0.590   0.087   0.678</span></span></code></pre>
 <p>The result is a matrix with 3000 rows and 8256 columns, the first of
 which contains the time, followed by the density trajectories of all
 species, and for all stations.</p>
@@ -1005,7 +1005,7 @@ station.</p>
 <p>We show the results for the 20 most abundant species in two
 stations.</p>
 <div class="figure">
-<img src="MWTL_files/figure-html/unnamed-chunk-31-1.png" alt="FIG: Density trajectories of 5 most abundant species from two stations" width="864"><p class="caption">
+<img src="MWTL_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="FIG: Density trajectories of 5 most abundant species from two stations" width="864"><p class="caption">
 FIG: Density trajectories of 5 most abundant species from two stations
 </p>
 </div>
@@ -1032,7 +1032,7 @@ is estimated:</p>
 <span>             type <span class="op">=</span> <span class="st">"legend"</span><span class="op">)</span></span>
 <span>   <span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="MWTL_files/figure-html/unnamed-chunk-32-1.png" alt="FIG: Average fishing impacts for the MWTL stations" width="480"><p class="caption">
+<img src="MWTL_files/figure-html/unnamed-chunk-32-1.png" class="r-plt" alt="FIG: Average fishing impacts for the MWTL stations" width="480"><p class="caption">
 FIG: Average fishing impacts for the MWTL stations
 </p>
 </div>
@@ -1281,7 +1281,7 @@ Royale des Sciences et Belles-Lettres de Bruxelles. 18: 8.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

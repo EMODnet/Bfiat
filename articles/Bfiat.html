@@ -97,7 +97,7 @@ ecosystem functions delivered by the community change.</p>
 <p>Logistic growth describes how species density or biomass evolves when
 the sediment is undisturbed (i.e. in between fishing events). The
 logistic model reads:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msub><mi>D</mi><mi>i</mi></msub></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>D</mi><mi>i</mi></msub><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}),</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msub><mi>D</mi><mi>i</mi></msub></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>⋅</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>D</mi><mi>i</mi></msub><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}),</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
 is time,
@@ -142,7 +142,7 @@ so that only a fraction
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msub><mi>d</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">1-d_i</annotation></semantics></math>
 remains:</li>
 </ol>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>+</mo></msubsup></msubsup><mo>=</mo><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>−</mo></msubsup></msubsup><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">D_i^{t_j^+} = D_i^{t_j^-} \times (1-d_i),</annotation></semantics></math>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>+</mo></msubsup></msubsup><mo>=</mo><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>−</mo></msubsup></msubsup><mo>×</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>,</mo></mrow><annotation encoding="application/x-tex">D_i^{t_j^+} = D_i^{t_j^-} \times (1-d_i),</annotation></semantics></math>
 Here
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>D</mi><mi>i</mi><msubsup><mi>t</mi><mi>j</mi><mo>+</mo></msubsup></msubsup><annotation encoding="application/x-tex">D_i^{t_j^+}</annotation></semantics></math>
 and
@@ -158,15 +158,15 @@ reduced.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>In between fishing, the population restores according to the
 logistic growth equation
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msub><mi>D</mi><mi>i</mi></msub></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>D</mi><mi>i</mi></msub><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}).</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msub><mi>D</mi><mi>i</mi></msub></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>⋅</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>D</mi><mi>i</mi></msub><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="false" form="postfix">)</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}).</annotation></semantics></math>
 </li>
 </ol>
 <p>The , the proportion of a grid cell swept by fishing gear per year,
 is used to estimate the mean <em>time in between fishing events</em> :
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>T</mi><mo>=</mo><mfrac><mn>1</mn><mi>S</mi></mfrac></mrow><annotation encoding="application/x-tex">\Delta T = \frac{1}{S}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>T</mi><mo>=</mo><mfrac><mn>1</mn><mi>S</mi></mfrac></mrow><annotation encoding="application/x-tex">\Delta T = \frac{1}{S}</annotation></semantics></math>,
 in years. From this, the times of the fishing events can be estimated,
 e.g. as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>j</mi></msub><mo>=</mo><msub><mi>T</mi><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mi>Δ</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">T_j = T_{j-1} + \Delta T</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>T</mi><mi>j</mi></msub><mo>=</mo><msub><mi>T</mi><mrow><mi>j</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mi mathvariant="normal">Δ</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">T_j = T_{j-1} + \Delta T</annotation></semantics></math>,
 where we assume equally spaced fishing events.</p>
 </div>
 <div class="section level3">
@@ -177,7 +177,7 @@ assume that fishing induces a constant mortality on the benthos of a
 large area rather than being caused by a set of localised events.</p>
 <p>In this case, the (continuous) dynamic model reads (e.g. Pitcher et
 al., 2017):
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msub><mi>D</mi><mi>i</mi></msub></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>D</mi><mi>i</mi></msub><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>m</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}) - m_i  \cdot D_i,</annotation></semantics></math></p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mi>d</mi><msub><mi>D</mi><mi>i</mi></msub></mrow><mrow><mi>d</mi><mi>t</mi></mrow></mfrac><mo>=</mo><msub><mi>r</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>⋅</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>D</mi><mi>i</mi></msub><msub><mi>K</mi><mi>i</mi></msub></mfrac><mo stretchy="false" form="postfix">)</mo><mo>−</mo><msub><mi>m</mi><mi>i</mi></msub><mo>⋅</mo><msub><mi>D</mi><mi>i</mi></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">\frac{dD_i}{dt}=r_i \cdot D_i \cdot (1-\frac{D_i}{K_i}) - m_i  \cdot D_i,</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mi>i</mi></msub><annotation encoding="application/x-tex">m_i</annotation></semantics></math>
 is the constant mortality induced upon the species
@@ -280,7 +280,7 @@ untrawled for another 10 years.</p>
 <span>       title <span class="op">=</span> <span class="st">"sar"</span>,legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1/yr"</span>, <span class="st">"2/yr"</span><span class="op">)</span>, </span>
 <span>       lty <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-7-1.png" alt="Two trawling impact runs, for a species with [r=0.5/yr, K=10 ind, d=0.1]; trawling lasts for 10 years, followed by a recovery of 10 years" width="700"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="Two trawling impact runs, for a species with [r=0.5/yr, K=10 ind, d=0.1]; trawling lasts for 10 years, followed by a recovery of 10 years" width="700"><p class="caption">
 Two trawling impact runs, for a species with [r=0.5/yr, K=10 ind,
 d=0.1]; trawling lasts for 10 years, followed by a recovery of 10 years
 </p>
@@ -335,7 +335,7 @@ argument <em>tend_perturb</em>.</p>
 <span>       legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0.2/yr"</span>, <span class="st">"0.4/yr"</span><span class="op">)</span>, title <span class="op">=</span> <span class="st">"m"</span>,</span>
 <span>       lty <span class="op">=</span> <span class="fl">1</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-9-1.png" alt="Two trawling impact runs, for a species with [r=0.5/yr, K=10 ind, d=0.1, m=0.1 and m=0.2/yr]; trawling lasts for 10 years, followed by a recovery of 10 years" width="700"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Two trawling impact runs, for a species with [r=0.5/yr, K=10 ind, d=0.1, m=0.1 and m=0.2/yr]; trawling lasts for 10 years, followed by a recovery of 10 years" width="700"><p class="caption">
 Two trawling impact runs, for a species with [r=0.5/yr, K=10 ind, d=0.1,
 m=0.1 and m=0.2/yr]; trawling lasts for 10 years, followed by a recovery
 of 10 years
@@ -382,7 +382,7 @@ of 10 years
 <span>       legend<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"0"</span>, <span class="st">"1"</span>, <span class="st">"2"</span><span class="op">)</span>, title<span class="op">=</span><span class="st">"trawls/year"</span>, </span>
 <span>       col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, lty<span class="op">=</span><span class="fl">1</span>, lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-10-1.png" alt="Trawling impacts on three species (s1, s2 and s3) and for two trawling intensities" width="576"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="Trawling impacts on three species (s1, s2 and s3) and for two trawling intensities" width="576"><p class="caption">
 Trawling impacts on three species (s1, s2 and s3) and for two trawling
 intensities
 </p>
@@ -422,7 +422,7 @@ their own depletion induced on the species:</p>
 <span><span class="co"># show the results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">runm</span>, lty <span class="op">=</span> <span class="fl">1</span>, las <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co">#, main = "3 metiers")</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-11-1.png" alt="Trawling impacts on four species (s1, s2, s3 and s4) and for three metiers" width="960"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="Trawling impacts on four species (s1, s2, s3 and s4) and for three metiers" width="960"><p class="caption">
 Trawling impacts on four species (s1, s2, s3 and s4) and for three
 metiers
 </p>
@@ -495,7 +495,7 @@ we also estimate the relative contribution (using argument
 <span>     main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fraction suspension feeding"</span>, <span class="st">"fraction deposit feeding"</span><span class="op">)</span>, </span>
 <span>     mfrow <span class="op">=</span> <span class="cn">NULL</span>, las <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-14-1.png" alt="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling" width="768"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling" width="768"><p class="caption">
 Change in absolute (top) and relative (bottom) contribution of feeding
 types due to trawling
 </p>
@@ -520,7 +520,7 @@ entire community.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Lrun2</span>, main <span class="op">=</span> <span class="st">"summed weight"</span>, xlab <span class="op">=</span> <span class="st">"g/m2"</span>,</span>
 <span>     mfrow <span class="op">=</span> <span class="cn">NULL</span>, las <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-15-1.png" alt="Change in mean and total weight due to trawling" width="768"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="Change in mean and total weight due to trawling" width="768"><p class="caption">
 Change in mean and total weight due to trawling
 </p>
 </div>
@@ -578,7 +578,7 @@ of each species to these indices, as well as the total index.</p>
 <span>                    weight <span class="op">=</span> <span class="va">weight</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Db</span>, las<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-17-1.png" alt="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling" width="576"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling" width="576"><p class="caption">
 Change in absolute (top) and relative (bottom) contribution of feeding
 types due to trawling
 </p>
@@ -589,7 +589,7 @@ types due to trawling
 <span>                     weight <span class="op">=</span> <span class="va">weight</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Irr</span>, las<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-17-2.png" alt="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling" width="576"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-17-2.png" class="r-plt" alt="Change in absolute  (top) and relative (bottom) contribution of feeding types due to trawling" width="576"><p class="caption">
 Change in absolute (top) and relative (bottom) contribution of feeding
 types due to trawling
 </p>
@@ -611,7 +611,7 @@ the depth occurrence of a species and of the gear penetration depth.</p>
 for a certain species
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
 is implemented as:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo>=</mo><mi>m</mi><mi>i</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>m</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>,</mo><munder><mo>∑</mo><mrow><mi>z</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>z</mi><mi>u</mi></msub><mo>,</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow></mrow></munder><msub><mi>m</mi><mi>d</mi></msub><mo>⋅</mo><mi>m</mi><mi>a</mi><mi>x</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msub><mi>p</mi><mi>G</mi></msub><mo>−</mo><msub><mi>z</mi><mi>u</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>f</mi><msub><mi>i</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>z</mi><mi>u</mi></msub><mo>,</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow></msub><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">d_i = min \left[m_{max}, \sum_{z=[z_u, z_l]}  m_d \cdot max\left( 0, p_G-z_u\right) \cdot fi_{[z_u, z_l]}\right]</annotation></semantics></math>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo>=</mo><mi>m</mi><mi>i</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>m</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>,</mo><munder><mo>∑</mo><mrow><mi>z</mi><mo>=</mo><mo stretchy="false" form="prefix">[</mo><msub><mi>z</mi><mi>u</mi></msub><mo>,</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="false" form="postfix">]</mo></mrow></munder><msub><mi>m</mi><mi>d</mi></msub><mo>⋅</mo><mi>m</mi><mi>a</mi><mi>x</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo>,</mo><msub><mi>p</mi><mi>G</mi></msub><mo>−</mo><msub><mi>z</mi><mi>u</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>f</mi><msub><mi>i</mi><mrow><mo stretchy="false" form="prefix">[</mo><msub><mi>z</mi><mi>u</mi></msub><mo>,</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="false" form="postfix">]</mo></mrow></msub><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">d_i = min \left[m_{max}, \sum_{z=[z_u, z_l]}  m_d \cdot max\left( 0, p_G-z_u\right) \cdot fi_{[z_u, z_l]}\right]</annotation></semantics></math>
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>z</mi><mi>u</mi></msub><annotation encoding="application/x-tex">z_u</annotation></semantics></math>
 and
@@ -623,13 +623,13 @@ has penetrated in the species’s living space (the sediment depth
 inbetween
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>z</mi><mi>u</mi></msub><mo>,</mo><msub><mi>z</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex">z_u, z_l</annotation></semantics></math>),
 and where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><msub><mi>i</mi><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>z</mi><mi>u</mi></msub><mo>,</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow></msub></mrow><annotation encoding="application/x-tex">fi_{[z_u, z_l]}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><msub><mi>i</mi><mrow><mo stretchy="false" form="prefix">[</mo><msub><mi>z</mi><mi>u</mi></msub><mo>,</mo><msub><mi>z</mi><mi>l</mi></msub><mo stretchy="false" form="postfix">]</mo></mrow></msub></mrow><annotation encoding="application/x-tex">fi_{[z_u, z_l]}</annotation></semantics></math>
 is the fractional occurrence of species
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
 in that zone. The maximal depletion fraction is limited to the value
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>m</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><annotation encoding="application/x-tex">m_{max}</annotation></semantics></math>.</p>
 <p>Good values for these parameters are
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mi>d</mi></msub><mo>=</mo><mn>0.055</mn></mrow><annotation encoding="application/x-tex">m_d = 0.055</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><msup><mi>m</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">cm^{-1}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mi>d</mi></msub><mo>=</mo><mn>0.055</mn></mrow><annotation encoding="application/x-tex">m_d = 0.055</annotation></semantics></math><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><msup><mi>m</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">cm^{-1}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>m</mi><mrow><mi>m</mi><mi>a</mi><mi>x</mi></mrow></msub><mo>=</mo><mn>0.42</mn></mrow><annotation encoding="application/x-tex">m_{max} = 0.42</annotation></semantics></math>.
 The function is defined as:</p>
@@ -664,7 +664,7 @@ gears.</p>
 <h3 id="rate-of-increase">Rate of increase<a class="anchor" aria-label="anchor" href="#rate-of-increase"></a>
 </h3>
 <p>Function <em>par_r</em> estimates the rate of increase (units
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><msup><mi>e</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">time^{-1}</annotation></semantics></math>),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mi>i</mi><mi>m</mi><msup><mi>e</mi><mrow><mi>−</mi><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">time^{-1}</annotation></semantics></math>),
 as a function of the species age at maturity (a_i) as follows:
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub><mo>=</mo><mfrac><mn>4.165</mn><msub><mi>a</mi><mi>i</mi></msub></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">r_i=\frac{4.165}{a_i}.</annotation></semantics></math>
 It is defined as:</p>
@@ -679,7 +679,7 @@ It is defined as:</p>
 <span>      main <span class="op">=</span> <span class="st">"relationship between age at maturity and r"</span>,</span>
 <span>      las  <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-22-1.png" alt="relationship between longevity and rate of increase" width="576"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" alt="relationship between longevity and rate of increase" width="576"><p class="caption">
 relationship between longevity and rate of increase
 </p>
 </div>
@@ -721,7 +721,7 @@ intensities</p>
 <span>      main <span class="op">=</span> <span class="st">"relationship between sar and K"</span>,</span>
 <span>      las <span class="op">=</span> <span class="fl">1</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-25-1.png" alt="relationship between carrying capaicty and swept area ratio" width="576"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-25-1.png" class="r-plt" alt="relationship between carrying capaicty and swept area ratio" width="576"><p class="caption">
 relationship between carrying capaicty and swept area ratio
 </p>
 </div>
@@ -859,7 +859,7 @@ data at 4 sites in the NorthSea.</p>
 <span>     y      <span class="op">=</span> <span class="va">NIOZdata</span><span class="op">$</span><span class="va">stations</span><span class="op">$</span><span class="va">y</span><span class="op">+</span><span class="fl">0.5</span>, </span>
 <span>     labels <span class="op">=</span> <span class="va">NIOZdata</span><span class="op">$</span><span class="va">stations</span><span class="op">$</span><span class="va">station</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-32-1.png" alt="Stations in the NIOZdata dataset" width="576"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-32-1.png" class="r-plt" alt="Stations in the NIOZdata dataset" width="576"><p class="caption">
 Stations in the NIOZdata dataset
 </p>
 </div>
@@ -967,7 +967,7 @@ in mud and sand).</li>
 <li>
 <em>lon</em>, <em>lat</em>, the coordinates of the points</li>
 </ul>
-<p><img src="Bfiat_files/figure-html/unnamed-chunk-34-1.png" width="768"></p>
+<p><img src="Bfiat_files/figure-html/unnamed-chunk-34-1.png" class="r-plt" alt="" width="768"></p>
 <p>Note: the R-package, <em>Btrait</em> (Soetaert and Beauchard, 2022)
 also contains density and trait data that can be used for fishery
 assessment.</p>
@@ -1036,7 +1036,7 @@ would dissappear.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">MWTL</span><span class="op">$</span><span class="va">abiotics</span><span class="op">$</span><span class="va">sar</span>, <span class="va">MWTL</span><span class="op">$</span><span class="va">abiotics</span><span class="op">$</span><span class="va">gpd</span>, </span>
 <span>       pch <span class="op">=</span> <span class="fl">18</span>, col <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, pch <span class="op">=</span> <span class="fl">18</span>, legend <span class="op">=</span> <span class="st">" MWTL stations"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Bfiat_files/figure-html/unnamed-chunk-37-1.png" width="768"></p>
+<p><img src="Bfiat_files/figure-html/unnamed-chunk-37-1.png" class="r-plt" alt="" width="768"></p>
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">c_s_MWTL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/critical.html">critical_sar</a></span><span class="op">(</span>gpd <span class="op">=</span> <span class="va">MWTL</span><span class="op">$</span><span class="va">abiotics</span><span class="op">$</span><span class="va">gpd</span>, </span>
 <span>                         fDepth <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">0.25</span><span class="op">)</span>,</span>
@@ -1109,7 +1109,7 @@ Northsea, and add the species from the MWTL area on this plot.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">SP_Fish</span><span class="op">$</span><span class="va">r</span>, <span class="va">SP_Fish</span><span class="op">$</span><span class="va">dW</span>, </span>
 <span>       pch <span class="op">=</span> <span class="fl">18</span>, col <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, pch <span class="op">=</span> <span class="fl">18</span>, legend <span class="op">=</span> <span class="st">" MWTL species"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Bfiat_files/figure-html/unnamed-chunk-40-1.png" width="768"></p>
+<p><img src="Bfiat_files/figure-html/unnamed-chunk-40-1.png" class="r-plt" alt="" width="768"></p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
@@ -1345,7 +1345,7 @@ density.</p>
 <span>     xlab  <span class="op">=</span> <span class="st">"year"</span>, </span>
 <span>     las<span class="op">=</span><span class="fl">1</span>, mfrow<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span>  <span class="co"># mforw=NULL to prevent it from starting a new figure</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-52-1.png" alt="Fishing impact on the density of the 8 most abundant species, and the total density in station FrieseFront; 20 years of fishing followed by 20 years without fishing." width="768"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-52-1.png" class="r-plt" alt="Fishing impact on the density of the 8 most abundant species, and the total density in station FrieseFront; 20 years of fishing followed by 20 years without fishing." width="768"><p class="caption">
 Fishing impact on the density of the 8 most abundant species, and the
 total density in station FrieseFront; 20 years of fishing followed by 20
 years without fishing.
@@ -1383,7 +1383,7 @@ data.frame <em>Taxonomy</em>.</p>
 <span>                         taxonomy <span class="op">=</span> <span class="va">NIOZdata</span><span class="op">$</span><span class="va">taxonomy</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">susp1</span>, </span>
 <span>     main <span class="op">=</span> <span class="st">"Relative abundance suspension feeders"</span>, ylab <span class="op">=</span> <span class="st">"-"</span>, las <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Bfiat_files/figure-html/unnamed-chunk-55-1.png" width="700"></p>
+<p><img src="Bfiat_files/figure-html/unnamed-chunk-55-1.png" class="r-plt" alt="" width="700"></p>
 <p>The bioturbation potential can be easily estimated by passing the
 correct database to the function <em>get_Db_model</em>. For this
 function, we also need the mean weight of the species which is
@@ -1407,7 +1407,7 @@ calculated first (<em>WW</em>).</p>
 <span>     ylab  <span class="op">=</span> <span class="st">"-"</span>, </span>
 <span>     las <span class="op">=</span> <span class="fl">1</span>, mfrow <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="Bfiat_files/figure-html/unnamed-chunk-57-1.png" alt="Fishing impact on the contribution to the bioturbation potential of the main species, and the total bioturbation potential in station FrieseFront; 20 years of fishing followed by 20 years without fishing." width="768"><p class="caption">
+<img src="Bfiat_files/figure-html/unnamed-chunk-57-1.png" class="r-plt" alt="Fishing impact on the contribution to the bioturbation potential of the main species, and the total bioturbation potential in station FrieseFront; 20 years of fishing followed by 20 years without fishing." width="768"><p class="caption">
 Fishing impact on the contribution to the bioturbation potential of the
 main species, and the total bioturbation potential in station
 FrieseFront; 20 years of fishing followed by 20 years without fishing.
@@ -1651,7 +1651,7 @@ based on taxonomic closeness.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
