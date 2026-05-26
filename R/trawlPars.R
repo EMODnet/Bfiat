@@ -70,16 +70,18 @@ par_d <- function(gpd   =     1 ,  # gear penetration depth, cm
 ## ====================================================================
 
 par_r <- function(age_at_maturity = NULL,  # age at maturity, years
-                  longevity       = NULL)  {     # lifetime, years
+                  longevity       = NULL,  # lifetime, years
+                  p_Am            = 2.26,  # proportionality factor for age_at_mat  
+                  p_L             = 5.31){ # proportionality factor for longevity
   
   if (is.null(age_at_maturity) & ! is.null(longevity)){                       
-     ri <- 5.31/longevity
+     ri <- p_L/longevity
   
   } else if (is.null(age_at_maturity)) {
     stop ("either longevity or age_at_maturity should have a value")
   
   } else {  # based on regression of r versus 1/AM
-     ri <- 2.56/age_at_maturity
+     ri <- p_Am/age_at_maturity  # p_Am used to be 2.56
   }
    ri[is.infinite(ri)] <- NA
    ri

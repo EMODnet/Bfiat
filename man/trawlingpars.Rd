@@ -18,7 +18,9 @@
 }
 
 \usage{
-par_r (age_at_maturity = NULL, longevity = NULL)   
+par_r (age_at_maturity = NULL, longevity = NULL, 
+       p_Am = 2.26, p_L  = 5.31)
+
 par_d (gpd = 1, m_d = 0.055, m_max = 0.42, 
        fDepth, uDepth)
 par_K (density, sar, r, d, t_density = NULL)       
@@ -42,7 +44,9 @@ par_m (sar, r, K, d, refD = K)
   }
   \item{refD }{reference density at which the mortality should be estimated. One number or a vector, or a vector of the same length as \code{r}.
   }
-  \item{longevity, age_at_maturity }{mean lifetime or age at maturity of the species, years. \code{age_at_maturity} gives better estimates of rate of increase than \code{longevity}. At least one of these two arguments needs to be specified; if both are given a value then 
+  \item{longevity, age_at_maturity }{mean lifetime or age at maturity of the species, years. \code{age_at_maturity} gives better estimates of rate of increase than \code{longevity}. At least one of these two arguments needs to be specified; if both are given a value then age_at_maturity is used.
+  }
+  \item{p_Am, p_L }{proportionality factor used with \code{age at maturity} or \code{longevity}; i.e. \code{r} is calculated either as \code{p_Am/age_at_maturity}, or as \code{p_L/longevity}. Note that before version 1.0.2, the default for p_Am was 2.56 rather than 2.26.
   }
   \item{gpd }{gear penetration depth, units e.g. [cm]. One number or a vector.
   }
